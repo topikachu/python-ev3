@@ -416,7 +416,7 @@ class LEDSide (object):
 
 
 class LED(object):
-
+    COLOR = Enum(RED=1, GREEN=2, AMBER=3)
     class COLOR:
         RED = 1
         GREEN = 2
@@ -424,3 +424,51 @@ class LED(object):
 
     left = LEDSide('left')
     right = LEDSide('right')
+
+
+@create_ev3_property(
+    tone={'read_only': False},
+    mode={'read_only':True},
+    volume={'read_only':False ,'property_type': Ev3IntType}
+)
+class Tone(Ev3Dev):
+    def __init__(self):
+        self.sys_path = '/sys/devices/platform/snd-legoev3'
+
+    def play(self,frequency,milliseconds=0):
+        self.tone='%d %d' %(frequency,frequency)
+
+    def stop(self):
+        self.tone='0'
+
+import os
+class Lcd():    
+    def __init__(self):
+        from PIL import Image,ImageDraw,ImageFont
+
+        SCREEN_WIDTH = 178
+        SCREEN_HEIGHT = 128
+        HW_MEM_WIDTH = ((SCREEN_WIDTH + 31)/32)*4
+        SCREEN_MEM_WIDTH = (SCREEN_WIDTH +7)/8
+        LCD_BUFFER_LENGTH = SCREEN_MEM_WIDTH*SCREEN_HEIGHT
+        LCD_HW_BUFFER_LENGTH = HW_MEM_WIDTH*SCREEN_HEIGHT
+        self._buffer= Image.new("1", (HW_MEM_WIDTH*8,SCREEN_HEIGHT),"white")
+        self._draw=ImageDraw.Draw(self._buffer)
+    def update(self):
+        f=os.open('/dev/fb0',os.O_RDWR)
+        os.write(f,self._buffer.tostring("raw", "1;IR"))
+        os.close(f)
+
+    @property
+    def buffer(self):
+        return self._buffer
+
+    @property
+    def draw(self):
+        return self._draw
+
+    def reset(self):
+        self._draw.rectangle((0,0)+self._buffer.size,outline='white',fill='white')
+
+
+
