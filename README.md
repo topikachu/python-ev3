@@ -6,6 +6,7 @@ a project to run lego ev3 in python
 * A linux box. Virtual Machine is also OK.
 * The latest lejos bootable sdcard: http://sourceforge.net/p/lejos/wiki/Home/
 * An arm linux versio python. https://www.dropbox.com/s/pk621lqpwi3s9i3/ev3.python.tar.gz
+
 ## Getting Started
 * Burn the lejos sdcard at your linux machine
 * Extract python and copy to sdcard 2nd partition (LMS2012_EXT) /home/root
@@ -16,3 +17,8 @@ a project to run lego ev3 in python
 password is empty  
 `export LD_LIBRARY_PATH=/home/root/python2/lib`  
 `export PATH=/home/root/python2/bin:$PATH`  
+
+## Reference
+* ev3 opensource project: https://github.com/mindboards/ev3sources
+* lejos: http://sourceforge.net/projects/lejos/
+* python compile instructions: http://www.droboports.com/app-repository/python-2-7-5
