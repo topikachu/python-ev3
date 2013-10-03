@@ -646,7 +646,7 @@ UWORD = c_ushort # /home/pikachu/ev3/ev3sources/lms2012/lms2012/source/lmstypes.
 
 ULONG = c_uint # /home/pikachu/ev3/ev3sources/lms2012/lms2012/source/lmstypes.h: 31
 
-SBYTE = c_char # /home/pikachu/ev3/ev3sources/lms2012/lms2012/source/lmstypes.h: 33
+SBYTE = c_byte # /home/pikachu/ev3/ev3sources/lms2012/lms2012/source/lmstypes.h: 33
 
 SWORD = c_short # /home/pikachu/ev3/ev3sources/lms2012/lms2012/source/lmstypes.h: 34
 
