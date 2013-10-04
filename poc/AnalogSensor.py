@@ -12,6 +12,6 @@ mm=mmap(fileno=analogfile, length=sizeof(ANALOG),flags=MAP_PRIVATE,prot=PROT_REA
 analog=ANALOG.from_buffer(mm)
 timeout=datetime.datetime.now()+datetime.timedelta(seconds=10)
 while (datetime.datetime.now()<timeout):
-	print analog.InPin6[0]
-	time.sleep(1)
+    print analog.InPin6[0]
+    time.sleep(1)
 os.close(analogfile)
