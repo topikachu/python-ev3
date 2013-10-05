@@ -4,18 +4,22 @@ import time
 class TestUARTDevice(unittest.TestCase):
 
     def setUp(self):
-        self.UARTDevice = UARTDevice(2)
+        self.uartDevice = UARTDevice(2)
 
     def test_setMode(self):
         # make sure the shuffled sequence does not lose any elements
-        self.UARTDevice.setMode(0)
-        self.UARTDevice.setMode(1)
-        self.UARTDevice.setMode(2)
-
-    def test_getValueByte(self):
+        self.uartDevice.setMode(0)
+        time.sleep(1)
+        self.uartDevice.setMode(1)
+        time.sleep(1)
+        self.uartDevice.setMode(2)
         for i in range(0,10):
-            print self.UARTDevice.getValueByte()
+            print self.uartDevice.getValueByte()
             time.sleep(1)
+        self.uartDevice.reset()
+
+    def tearDown(self):
+        self.uartDevice.close()
 
     
 
