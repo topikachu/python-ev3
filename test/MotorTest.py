@@ -1,4 +1,4 @@
-from ev3.cdriver.rawdevice import MotorDevice
+from ev3.rawdevice import MotorDevice
 import unittest
 import time
 class TestMotorDevice(unittest.TestCase):

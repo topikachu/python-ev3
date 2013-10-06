@@ -1,4 +1,4 @@
-from ev3.cdriver.rawdevice import AnalogDevice
+from ev3.rawdevice import AnalogDevice
 import unittest
 import time
 class TestAnalogDevice(unittest.TestCase):

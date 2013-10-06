@@ -1,4 +1,4 @@
-from ev3.cdriver.rawdevice import UARTDevice
+from ev3.rawdevice import UARTDevice
 import unittest
 import time
 class TestUARTDevice(unittest.TestCase):
