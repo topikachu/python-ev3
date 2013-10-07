@@ -42,9 +42,6 @@ class TestLCD(unittest.TestCase):
         LCD.white()
         time.sleep(2)
         LCD.drawImage(menu_bits,0,0,16,132,0,0,16,64)
-        fontbits,fontwidth,fontheight=getFont(u'C')
-        print fontbits
-        LCD.drawImage(menu_bits,0,0,fontwidth,fontheight,48,0,fontwidth,fontheight)
         
 
     def tearDown(self):

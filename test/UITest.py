@@ -15,7 +15,7 @@ class TestUIDevice(unittest.TestCase):
         UI.setLed(0)
 
     def test_key(self):
-        print "button test. Press up key!"
+        print "Button test. Press the 'up' key!"
         for i in range(0,10):
             print UI.isPressed(0)
             time.sleep(1)

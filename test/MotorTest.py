@@ -4,19 +4,19 @@ import time
 class TestMotorDevice(unittest.TestCase):
 
     def setUp(self):
-        self.motorDevice = MotorDevice(0)
+        MotorDevice.init()
 
     def test_motor(self):
         # make sure the shuffled sequence does not lose any elements
-        self.motorDevice.start()
-        self.motorDevice.power(50)
+        MotorDevice.start(0)
+        MotorDevice.power(0,50)
         for i in range(0,10):
-            print self.motorDevice.getTacho()
-            print self.motorDevice.getSpeed()
+            print MotorDevice.getTacho(0)
+            print MotorDevice.getSpeed(0)
             time.sleep(1)
-        self.motorDevice.stop()
+        MotorDevice.stop(0)
     def tearDown(self):
-        self.motorDevice.close()
+        MotorDevice.close()
 
 
 if __name__ == '__main__':

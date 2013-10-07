@@ -4,16 +4,17 @@ import time
 class TestAnalogDevice(unittest.TestCase):
 
     def setUp(self):
-        self.analogDevice = AnalogDevice(0)
+        AnalogDevice.init()
 
     
     def test_getValue(self):
+        print "Touch Sensor test. Press the button"
         for i in range(0,10):
-            print self.analogDevice.getPin6()            
+            print AnalogDevice.getPin6(0)            
             time.sleep(1)
 
     def tearDown(self):
-        self.analogDevice.close()
+        AnalogDevice.close()
 
 
 if __name__ == '__main__':

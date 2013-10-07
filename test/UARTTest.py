@@ -4,22 +4,23 @@ import time
 class TestUARTDevice(unittest.TestCase):
 
     def setUp(self):
-        self.uartDevice = UARTDevice(2)
+        UARTDevice.init()
 
     def test_setMode(self):
-        # make sure the shuffled sequence does not lose any elements
-        self.uartDevice.setMode(0)
+        
+        UARTDevice.setMode(2,0)
         time.sleep(1)
-        self.uartDevice.setMode(1)
+        UARTDevice.setMode(2,1)
         time.sleep(1)
-        self.uartDevice.setMode(2)
+        UARTDevice.setMode(2,2)
+        print "Color Sensor test!"
         for i in range(0,10):
-            print self.uartDevice.getValueByte()
+            print UARTDevice.getValueByte(2)
             time.sleep(1)
-        self.uartDevice.reset()
+        UARTDevice.reset(2)
 
     def tearDown(self):
-        self.uartDevice.close()
+        UARTDevice.close()
 
     
 
