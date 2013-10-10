@@ -2,18 +2,13 @@ import os
 import time
 from mmap import *
 from . import lms2012
+from . import lms2012extra
 from fcntl import ioctl
 from ctypes import sizeof
 import datetime
 
 
 devcon=lms2012.DEVCON()
-
-
-UART_SET_CONN = 0xc00c7500;
-UART_READ_MODE_INFO = 0xc03c7501;
-UART_NACK_MODE_INFO = 0xc03c7502;
-UART_CLEAR_CHANGED = 0xc03c7503;
 
 INPUT_DEVICE_NUMBER=4;
 OUTPUT_DEVICE_NUMBER=4;
@@ -63,7 +58,7 @@ def clearChange(port):
         devcon.Connection[port]=lms2012.CONN_INPUT_UART
         devcon.Type[port]=0
         devcon.Mode[port]=0
-        ioctl(uartfile,UART_CLEAR_CHANGED, devcon)
+        ioctl(uartfile,lms2012extra.UART_CLEAR_CHANGED, devcon)
         uart.Status[port] = uart.Status[port] & ~ lms2012.UART_PORT_CHANGED
         time.sleep(0.01)
 
@@ -73,7 +68,7 @@ def setMode(port,mode):
         devcon.Connection[port]=lms2012.CONN_INPUT_UART
         devcon.Type[port]=0
         devcon.Mode[port]=mode
-        ioctl(uartfile,UART_SET_CONN,devcon)
+        ioctl(uartfile,lms2012extra.UART_SET_CONN,devcon)
         status = waitNoZeroStatus(port)
         if status & lms2012.UART_PORT_CHANGED:
             clearChange(port)
@@ -91,7 +86,7 @@ def reset(port):
     devcon.Connection[port]=lms2012.CONN_NONE
     devcon.Type[port]=0
     devcon.Mode[port]=0
-    ioctl(uartfile,UART_SET_CONN, devcon)
+    ioctl(uartfile,lms2012extra.UART_SET_CONN, devcon)
     
 
 def close():
