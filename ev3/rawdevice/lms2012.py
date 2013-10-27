@@ -3150,7 +3150,7 @@ struct_anon_73.__slots__ = [
     'Align',
 ]
 struct_anon_73._fields_ = [
-    ('Name', SBYTE * (11 + 1)),
+    ('Name', c_char * (11 + 1)),
     ('Type', DATA8),
     ('Connection', DATA8),
     ('Mode', DATA8),

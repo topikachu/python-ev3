@@ -13,10 +13,14 @@ class TestUARTDevice(unittest.TestCase):
         UARTDevice.setMode(2,1)
         time.sleep(1)
         UARTDevice.setMode(2,2)
+        deviceType = UARTDevice.getModeInfo(2,0)
+        print deviceType.Name
+        print deviceType.Type
         print "Color Sensor test!"
         for i in range(0,10):
             print UARTDevice.getValueByte(2)
             time.sleep(1)
+
         UARTDevice.reset(2)
 
     def tearDown(self):

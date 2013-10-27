@@ -3,12 +3,13 @@ import time
 from mmap import *
 from . import lms2012
 from . import lms2012extra
+
 from fcntl import ioctl
 from ctypes import sizeof
 import datetime
 
+from . import devcon
 
-devcon=lms2012.DEVCON()
 
 INPUT_DEVICE_NUMBER=4;
 OUTPUT_DEVICE_NUMBER=4;
@@ -87,7 +88,14 @@ def reset(port):
     devcon.Type[port]=0
     devcon.Mode[port]=0
     ioctl(uartfile,lms2012extra.UART_SET_CONN, devcon)
-    
+
+def getModeInfo(port,mode):
+    uartCtl=lms2012.UARTCTL()
+    uartCtl.Port  =  port
+    uartCtl.Mode = mode
+    ioctl(uartfile,lms2012extra.UART_READ_MODE_INFO,uartCtl);
+    return uartCtl.TypeData
+
 
 def close():
     global isInitialized

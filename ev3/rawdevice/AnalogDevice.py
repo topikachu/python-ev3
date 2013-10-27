@@ -14,6 +14,7 @@ analog=None
 def init():
     global isInitialized    
     if not isInitialized:
+        global analogfile
         analogfile=os.open(lms2012.ANALOG_DEVICE_NAME,os.O_RDWR)
         global analogmm
         analogmm=mmap(fileno=analogfile, length=sizeof(lms2012.ANALOG),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
@@ -24,6 +25,15 @@ def getPin6(port):
     return analog.InPin6[port]
 def getPin1(port):
     return analog.InPin1[port]
+
+def getConnectionType(port):
+    print lms2012.CtoV(analog.InPin1[port])
+    return analog.InConn[port]
+
+
+def clearChange(port):
+    analog.Updated[port] =  0
+
 
 def close():
     global isInitialized    
