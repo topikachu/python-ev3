@@ -10,16 +10,23 @@ class TestUARTDevice(unittest.TestCase):
 
     def test_setMode(self):
         IICDevice.reset(0)
-        Dcm.setPinMode(0,ord('0'));
-        buf=bytearray([0x41,ord('I')])
+        Dcm.setPinMode(0,ord('F'));
+        
         #IICDevice.i2cTransaction(0,0x02,buf,0)
         
-        buf=bytearray([0x10])
-        value = IICDevice.i2cTransaction(0,0x02,buf,8)
-        if value:
-                for v in  value:
-                    print chr(v)
         
+        value = IICDevice.i2cTransaction(0,0x02,bytearray([0x00]),8)
+        print bytearray(value).decode()
+        value = IICDevice.i2cTransaction(0,0x02,bytearray([0x08]),8)
+        print bytearray(value).decode()
+        value = IICDevice.i2cTransaction(0,0x02,bytearray([0x10]),8)
+        print bytearray(value).decode()
+        buf=bytearray([0x41,ord('I')])
+        IICDevice.i2cTransaction(0,0x02,buf,0)
+        for i in range(0,100):
+            value = IICDevice.i2cTransaction(0,0x02,bytearray([0x42]),1)
+            time.sleep(0)
+            print value[0]
         
 
     def tearDown(self):

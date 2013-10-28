@@ -64,8 +64,6 @@ def i2cTransaction(port,deviceAddress, writeBuf, readLen):
         iicdata.WrData[1:len(writeBuf)+1]=writeBuf[:]
         iicdata.WrData[0] = deviceAddress >> 1
         iicdata.RdLng = -readLen
-        print iicdata.WrData[:]
-        print writeBuf[:]
         timeout=datetime.datetime.now()+datetime.timedelta(seconds=1)
         while True:
             ioctl(iicfile, lms2012extra.IIC_SETUP, iicdata)            
