@@ -3,7 +3,6 @@ import array
 import time
 import unittest
 
-from ev3.font import get_font
 from ev3.rawdevice import lcd
 
 
@@ -36,7 +35,7 @@ menu_bits = array.array('B',[
 class TestLCD(unittest.TestCase):
 
     def setUp(self):
-        lcd.open()
+        lcd.open_device()
 
     
     def test_lcd(self):
@@ -48,7 +47,7 @@ class TestLCD(unittest.TestCase):
         
 
     def tearDown(self):
-        lcd.close()
+        lcd.close_device()
 
 
 if __name__ == '__main__':

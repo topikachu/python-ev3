@@ -1,12 +1,10 @@
-from ctypes import *
+from ctypes import sizeof
 import datetime
 from fcntl import ioctl
-from mmap import *
+from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
-import struct
 import time
 
-import ev3
 from ev3.rawdevice import lms2012
 from ev3.rawdevice.lms2012 import UART, UART_DEVICE_NAME
 
@@ -22,13 +20,13 @@ def resetAll():
         devcon.Connection[i]=lms2012.CONN_NONE
         devcon.Type[i]=0
         devcon.Mode[i]=0
-        ioctl(uartfile,UART_SET_CONN, devcon)   
+        ioctl(_uartfile,UART_SET_CONN, devcon)   
 
 
 def wait_no_zero_status():
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=10)
     while True:
-        status = uart.Status[port]    
+        status = _uart.Status[port]    
         if status!=0 or datetime.datetime.now()>timeout:
             break 
         time.sleep(0.025)
@@ -40,7 +38,7 @@ def resetDevice():
     INIT_RETRY=100    
     retryCnt = 0
     while True:
-        status = uart.Status[port]
+        status = _uart.Status[port]
         if (status & lms2012.UART_DATA_READY) != 0 and (status & lms2012.UART_PORT_CHANGED) == 0:
             break
         if retryCnt > INIT_RETRY:
@@ -48,8 +46,8 @@ def resetDevice():
         devcon.Connection[port]=lms2012.CONN_INPUT_UART
         devcon.Type[port]=0
         devcon.Mode[port]=0
-        ioctl(uartfile,UART_CLEAR_CHANGED, devcon)
-        uart.Status[port] = uart.Status[port] & ~ lms2012.UART_PORT_CHANGED
+        ioctl(_uartfile,UART_CLEAR_CHANGED, devcon)
+        _uart.Status[port] = _uart.Status[port] & ~ lms2012.UART_PORT_CHANGED
         retryCnt = retryCnt +1
         time.sleep(0.01)
 
@@ -58,7 +56,7 @@ def setUartMode(mode):
         devcon.Connection[port]=lms2012.CONN_INPUT_UART
         devcon.Type[port]=0
         devcon.Mode[port]=mode
-        ioctl(uartfile,UART_SET_CONN,devcon)
+        ioctl(_uartfile,UART_SET_CONN,devcon)
         status = wait_no_zero_status()
         if status & lms2012.UART_PORT_CHANGED:
             resetDevice()
@@ -70,15 +68,15 @@ def setUartMode(mode):
 
 def main():
 
-    global uartfile
-    uartfile=os.open(UART_DEVICE_NAME,os.O_RDWR)
+    global _uartfile
+    _uartfile=os.open(UART_DEVICE_NAME,os.O_RDWR)
 
-    mm=mmap(fileno=uartfile, length=sizeof(UART),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
+    mm=mmap(fileno=_uartfile, length=sizeof(UART),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
 
     global devcon
     devcon=lms2012.DEVCON()
-    global uart
-    uart=UART.from_buffer(mm)
+    global _uart
+    _uart=UART.from_buffer(mm)
 
 
     resetAll()
@@ -91,12 +89,12 @@ def main():
     setUartMode(2)
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=10)
     while (datetime.datetime.now()<timeout):
-        index = uart.Actual[port]
+        index = _uart.Actual[port]
         print index
-        print [str(b) for b in uart.Raw[port][index]]
+        print [str(b) for b in _uart.Raw[port][index]]
         time.sleep(1)
     mm.close()
-    os.close(uartfile)
+    os.close(_uartfile)
 
 
 if __name__ == '__main__':

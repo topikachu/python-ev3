@@ -7,7 +7,7 @@ from ev3.rawdevice import uartdevice
 class TestUARTDevice(unittest.TestCase):
 
     def setUp(self):
-        uartdevice.open()
+        uartdevice.open_device()
 
     def test_setMode(self):
         
@@ -20,14 +20,16 @@ class TestUARTDevice(unittest.TestCase):
         print deviceType.Name
         print deviceType.Type
         print "Color Sensor test!"
-        for i in range(0,10):
+        i=0
+        while i<10:
             print uartdevice.get_value_byte(2)
             time.sleep(1)
+            i+=1
 
         uartdevice.reset(2)
 
     def tearDown(self):
-        uartdevice.close()
+        uartdevice.close_device()()
 
     
 

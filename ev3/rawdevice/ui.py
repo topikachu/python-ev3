@@ -1,43 +1,39 @@
-import array
 from ctypes import sizeof
-import datetime
-from fcntl import ioctl
-from mmap import *
+from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
 import struct
-import time
 
 from . import lms2012
 
 
-isInitialized=False
-uifile=None
-uimm=None
-ui=None
+_initialized=False
+_uifile=None
+_uimm=None
+_ui=None
 
-def open():
-    global isInitialized
-    if not isInitialized:
-        global uifile
-        uifile=os.open(lms2012.UI_DEVICE_NAME,os.O_RDWR | os.O_SYNC)
-        global uimm
-        uimm=mmap(fileno=uifile, length=sizeof(lms2012.UI),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
-        global ui
-        ui=lms2012.UI.from_buffer(uimm)
-        isInitialized=True
+def open_device():
+    global _initialized
+    if not _initialized:
+        global _uifile
+        _uifile=os.open(lms2012.UI_DEVICE_NAME,os.O_RDWR | os.O_SYNC)
+        global _uimm
+        _uimm=mmap(fileno=_uifile, length=sizeof(lms2012.UI),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
+        global _ui
+        _ui=lms2012.UI.from_buffer(_uimm)
+        _initialized=True
 
 def set_led(light):
-    os.write(uifile,struct.pack('BB',ord('0')+light,0))
+    os.write(_uifile,struct.pack('BB',ord('0')+light,0))
 
 def is_pressed(key):
-    return ui.Pressed[key]
+    return _ui.Pressed[key]
 
-def close():
-    global isInitialized
-    if isInitialized:
-        uimm.close()
-        os.close(uifile)
-        isInitialized=False
+def close_device():
+    global _initialized
+    if _initialized:
+        _uimm.close()
+        os.close(_uifile)
+        _initialized=False
 
 
 

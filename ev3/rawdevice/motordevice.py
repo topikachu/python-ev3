@@ -1,53 +1,50 @@
 from ctypes import sizeof
-import datetime
-from fcntl import ioctl
-from mmap import *
+from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
 import struct
-import time
 
 from . import lms2012
 
 
-isInitialized=False
-pwmfile=None
-motorfile=None
-motormm=None
-motodata=None
+_initialized=False
+_pwmfile=None
+_motorfile=None
+_motormm=None
+_motodata=None
 
 
-def open():
-    global isInitialized
-    if not isInitialized:
-        global pwmfile
-        pwmfile=os.open(lms2012.PWM_DEVICE_NAME,os.O_RDWR)
-        global motorfile
-        motorfile=os.open(lms2012.MOTOR_DEVICE_NAME,os.O_RDWR)
+def open_device():
+    global _initialized
+    if not _initialized:
+        global _pwmfile
+        _pwmfile=os.open(lms2012.PWM_DEVICE_NAME,os.O_RDWR)
+        global _motorfile
+        _motorfile=os.open(lms2012.MOTOR_DEVICE_NAME,os.O_RDWR)
         MOTORDATAArrray=lms2012.MOTORDATA * 4
-        global motormm
-        motormm=mmap(fileno=motorfile, length=sizeof(MOTORDATAArrray),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)    
-        global motodata
-        motodata=MOTORDATAArrray.from_buffer(motormm)
-        isInitialized=True
+        global _motormm
+        _motormm=mmap(fileno=_motorfile, length=sizeof(MOTORDATAArrray),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)    
+        global _motodata
+        _motodata=MOTORDATAArrray.from_buffer(_motormm)
+        _initialized=True
 
 def start(port):
-    os.write(pwmfile, struct.pack('BB',lms2012.opOUTPUT_START,1<<port))
+    os.write(_pwmfile, struct.pack('BB',lms2012.opOUTPUT_START,1<<port))
 def stop(port):
-    os.write(pwmfile, struct.pack('BBB',lms2012.opOUTPUT_STOP,1<<port,0))
+    os.write(_pwmfile, struct.pack('BBB',lms2012.opOUTPUT_STOP,1<<port,0))
 def power(port,power):
-    os.write(pwmfile, struct.pack('BBB',lms2012.opOUTPUT_POWER,1<<port,power))
+    os.write(_pwmfile, struct.pack('BBB',lms2012.opOUTPUT_POWER,1<<port,power))
 def get_speed(port):
-    return motodata[port].Speed
+    return _motodata[port].Speed
 def get_tacho(port):
-    return motodata[port].TachoCounts
+    return _motodata[port].TachoCounts
 
-def close():
-    global isInitialized
-    if isInitialized:
-        motormm.close()
-        os.close(motorfile)
-        os.close(pwmfile)
-        isInitialized=False
+def close_device():
+    global _initialized
+    if _initialized:
+        _motormm.close()
+        os.close(_motorfile)
+        os.close(_pwmfile)
+        _initialized=False
 
 
 

@@ -1,7 +1,7 @@
 from ctypes import sizeof
 import datetime
 from fcntl import ioctl
-from mmap import *
+from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
 import time
 
@@ -14,21 +14,21 @@ OUTPUT_DEVICE_NUMBER=4;
 
 
 
-isInitialized=False
-iicfile=None
-iicmm=None
-iic=None
+_initialized=False
+_iicfile=None
+_iicmm=None
+_iic=None
 
-def open():
-    global isInitialized
-    if not isInitialized:        
-        global iicfile        
-        iicfile=os.open(lms2012.IIC_DEVICE_NAME,os.O_RDWR)
-        global iicmm        
-        iicmm=mmap(fileno=iicfile, length=sizeof(lms2012.IIC),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
-        global iic
-        iic=lms2012.IIC.from_buffer(iicmm)
-        isInitialized=True
+def open_device():
+    global _initialized
+    if not _initialized:        
+        global _iicfile        
+        _iicfile=os.open(lms2012.IIC_DEVICE_NAME,os.O_RDWR)
+        global _iicmm        
+        _iicmm=mmap(fileno=_iicfile, length=sizeof(lms2012.IIC),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
+        global _iic
+        _iic=lms2012.IIC.from_buffer(_iicmm)
+        _initialized=True
 
 
 
@@ -36,7 +36,7 @@ def set_operating_mode(port, typ, mode):
     devcon.Connection[port]=lms2012.CONN_NXT_IIC
     devcon.Type[port]=typ
     devcon.Mode[port]=mode
-    ioctl(iicfile, lms2012extra.IIC_SET_CONN, devcon);        
+    ioctl(_iicfile, lms2012extra.IIC_SET_CONN, devcon);        
     
 
 def reset(port):
@@ -45,11 +45,10 @@ def reset(port):
     devcon.Connection[port]=lms2012.CONN_NONE
     devcon.Type[port]=0
     devcon.Mode[port]=0
-    ioctl(iicfile,lms2012extra.IIC_SET_CONN, devcon)
+    ioctl(_iicfile,lms2012extra.IIC_SET_CONN, devcon)
     time.sleep(0.1)
     set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
-    time.sleep(0.1)
-    set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
+    
     
 def i2c_transaction(port,deviceAddress, writeBuf, readLen):    
         iicdata=lms2012.IICDAT()
@@ -63,8 +62,8 @@ def i2c_transaction(port,deviceAddress, writeBuf, readLen):
         iicdata.RdLng = -readLen
         timeout=datetime.datetime.now()+datetime.timedelta(seconds=1)
         while True:
-            ioctl(iicfile, lms2012extra.IIC_SETUP, iicdata)            
-            status = iicdata.Result
+            ioctl(_iicfile, lms2012extra.IIC_SETUP, iicdata)            
+            #status = iicdata.Result
             if (iicdata.Result == 0):
                 return iicdata.RdData[:readLen]
             if datetime.datetime.now()>timeout:
@@ -74,10 +73,10 @@ def i2c_transaction(port,deviceAddress, writeBuf, readLen):
             
     
 
-def close():
-    global isInitialized
-    if isInitialized:
-        iicmm.close()
-        os.close(iicfile)
-        isInitialized=False
+def close_device():
+    global _initialized
+    if _initialized:
+        _iicmm.close()
+        os.close(_iicfile)
+        _initialized=False
 

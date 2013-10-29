@@ -1,47 +1,44 @@
 from ctypes import sizeof
-import datetime
-from fcntl import ioctl
-from mmap import *
+from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
-import time
 
 from . import lms2012
 
 
-isInitialized=False
-analogfile=None
-analogmm=None
-analog=None
-def open():
-    global isInitialized    
-    if not isInitialized:
-        global analogfile
-        analogfile=os.open(lms2012.ANALOG_DEVICE_NAME,os.O_RDWR)
-        global analogmm
-        analogmm=mmap(fileno=analogfile, length=sizeof(lms2012.ANALOG),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
-        global analog
-        analog=lms2012.ANALOG.from_buffer(analogmm)
-        isInitialized=True
+_initialized=False
+_analogfile=None
+_analogmm=None
+_analog=None
+def open_device():
+    global _initialized    
+    if not _initialized:
+        global _analogfile
+        _analogfile=os.open(lms2012.ANALOG_DEVICE_NAME,os.O_RDWR)
+        global _analogmm
+        _analogmm=mmap(fileno=_analogfile, length=sizeof(lms2012.ANALOG),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
+        global _analog
+        _analog=lms2012.ANALOG.from_buffer(_analogmm)
+        _initialized=True
 def get_pin6(port):
-    return analog.InPin6[port]
+    return _analog.InPin6[port]
 def get_pin1(port):
-    return analog.InPin1[port]
+    return _analog.InPin1[port]
 
 def get_connection_type(port):
-    print lms2012.CtoV(analog.InPin1[port])
-    return analog.InConn[port]
+    print lms2012.CtoV(_analog.InPin1[port])
+    return _analog.InConn[port]
 
 
 def clear_change(port):
-    analog.Updated[port] =  0
+    _analog.Updated[port] =  0
 
 
-def close():
-    global isInitialized    
-    if isInitialized:
-        analogmm.close()
-        os.close(analogfile)
-        isInitialized=False
+def close_device():
+    global _initialized    
+    if _initialized:
+        _analogmm.close()
+        os.close(_analogfile)
+        _initialized=False
     
 
 

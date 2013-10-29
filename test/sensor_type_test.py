@@ -7,7 +7,7 @@ from ev3.rawdevice import analogdevice
 class TestAnalogDevice(unittest.TestCase):
 
     def setUp(self):
-        analogdevice.open()
+        analogdevice.open_device()
 
     
     def test_getValue(self):
@@ -17,7 +17,7 @@ class TestAnalogDevice(unittest.TestCase):
             time.sleep(1)
 
     def tearDown(self):
-        analogdevice.close()
+        analogdevice.close_device()
 
 
 if __name__ == '__main__':

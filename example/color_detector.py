@@ -6,7 +6,7 @@ from ev3 import brick
 from ev3.lego import EV3ColorSensor
 
 
-brick.open()
+brick.open_device()
 colorSensor = EV3ColorSensor(3)
 colorSensor.setColorMode()
 brick.registerEvent(lambda: colorSensor.getValue()==7,lambda:print("hello"))

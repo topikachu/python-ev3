@@ -1,6 +1,5 @@
 # -*- coding: utf8
-import array
-import time
+
 import unittest
 
 from ev3.font import get_font

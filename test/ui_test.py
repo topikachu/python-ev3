@@ -1,29 +1,33 @@
 import time
 import unittest
 
-from ev3.rawdevice import lms2012, ui
+from ev3.rawdevice import ui
 
 
 class TestUIDevice(unittest.TestCase):
 
     def setUp(self):
-        ui.open()
+        ui.open_device()
 
     
     def test_setLed(self):
-        for i in range(1,10):
+        i=0
+        while i < 10:            
             ui.set_led(i)
             time.sleep(1)
+            i+=1
         ui.set_led(0)
 
     def test_key(self):
         print "Button test. Press the 'up' key!"
-        for i in range(0,10):
+        i=0
+        while i<10:
             print ui.is_pressed(0)
             time.sleep(1)
+            i+=1
 
     def tearDown(self):
-        ui.close()
+        ui.close_device()
 
 
 if __name__ == '__main__':

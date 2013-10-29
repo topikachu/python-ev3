@@ -1,6 +1,5 @@
 # -*- coding: utf8
-import array
-import time
+
 import unittest
 
 from ev3.rawdevice import sound
@@ -9,7 +8,7 @@ from ev3.rawdevice import sound
 class TestSound(unittest.TestCase):
 
     def setUp(self):
-        sound.open()
+        sound.open_device()
 
     
     def test_lcd(self):
@@ -17,7 +16,7 @@ class TestSound(unittest.TestCase):
         
 
     def tearDown(self):
-        sound.close()
+        sound.close_device()
 
 
 if __name__ == '__main__':

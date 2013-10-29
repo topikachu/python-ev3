@@ -1,4 +1,4 @@
-from rawdevice import analogdevice, motordevice, uartdevice
+from rawdevice import uartdevice
 
 
 class EV3ColorSensor():
