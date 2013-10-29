@@ -1,2 +1,4 @@
-__all__ = ["getFont"]
-from font import getFont
+__all__ = ["get_font"]
+from font import get_font
+
+

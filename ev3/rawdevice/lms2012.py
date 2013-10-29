@@ -10,8 +10,18 @@ __docformat__ =  'restructuredtext'
 
 # Begin preamble
 
-import ctypes, os, sys
 from ctypes import *
+import ctypes
+import ctypes
+import ctypes.util
+import glob
+import os
+import os.path
+import platform
+import re
+import sys
+import sys
+
 
 _int_types = (c_int16, c_int32)
 if hasattr(ctypes, 'c_int64'):
@@ -341,10 +351,6 @@ _libdirs = []
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-import os.path, re, sys, glob
-import platform
-import ctypes
-import ctypes.util
 
 def _environ_path(name):
     if name in os.environ:

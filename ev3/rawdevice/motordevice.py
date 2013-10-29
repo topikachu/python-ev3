@@ -1,14 +1,12 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from fcntl import ioctl
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
 import struct
+import time
 
-        
-
+from . import lms2012
 
 
 isInitialized=False
@@ -18,7 +16,7 @@ motormm=None
 motodata=None
 
 
-def init():
+def open():
     global isInitialized
     if not isInitialized:
         global pwmfile
@@ -38,9 +36,9 @@ def stop(port):
     os.write(pwmfile, struct.pack('BBB',lms2012.opOUTPUT_STOP,1<<port,0))
 def power(port,power):
     os.write(pwmfile, struct.pack('BBB',lms2012.opOUTPUT_POWER,1<<port,power))
-def getSpeed(port):
+def get_speed(port):
     return motodata[port].Speed
-def getTacho(port):
+def get_tacho(port):
     return motodata[port].TachoCounts
 
 def close():

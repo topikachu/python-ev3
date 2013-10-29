@@ -1,22 +1,25 @@
-from ev3.rawdevice import MotorDevice
-import unittest
 import time
+import unittest
+
+from ev3.rawdevice import motordevice
+
+
 class TestMotorDevice(unittest.TestCase):
 
     def setUp(self):
-        MotorDevice.init()
+        motordevice.open()
 
     def test_motor(self):
         # make sure the shuffled sequence does not lose any elements
-        MotorDevice.start(0)
-        MotorDevice.power(0,50)
+        motordevice.start(0)
+        motordevice.power(0,50)
         for i in range(0,10):
-            print MotorDevice.getTacho(0)
-            print MotorDevice.getSpeed(0)
+            print motordevice.get_tacho(0)
+            print motordevice.get_speed(0)
             time.sleep(1)
-        MotorDevice.stop(0)
+        motordevice.stop(0)
     def tearDown(self):
-        MotorDevice.close()
+        motordevice.close()
 
 
 if __name__ == '__main__':

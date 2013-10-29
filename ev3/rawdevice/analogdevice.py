@@ -1,17 +1,18 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from fcntl import ioctl
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
+import time
+
+from . import lms2012
 
 
 isInitialized=False
 analogfile=None
 analogmm=None
 analog=None
-def init():
+def open():
     global isInitialized    
     if not isInitialized:
         global analogfile
@@ -21,17 +22,17 @@ def init():
         global analog
         analog=lms2012.ANALOG.from_buffer(analogmm)
         isInitialized=True
-def getPin6(port):
+def get_pin6(port):
     return analog.InPin6[port]
-def getPin1(port):
+def get_pin1(port):
     return analog.InPin1[port]
 
-def getConnectionType(port):
+def get_connection_type(port):
     print lms2012.CtoV(analog.InPin1[port])
     return analog.InConn[port]
 
 
-def clearChange(port):
+def clear_change(port):
     analog.Updated[port] =  0
 
 

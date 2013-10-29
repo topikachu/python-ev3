@@ -1,13 +1,15 @@
-import os
-import time
-import struct
-import ev3
-from mmap import *
 from ctypes import *
-from ev3.cdriver.lms2012 import UART,UART_DEVICE_NAME
-from ev3.cdriver import lms2012
-from fcntl import ioctl
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
+import struct
+import time
+
+import ev3
+from ev3.rawdevice import lms2012
+from ev3.rawdevice.lms2012 import UART, UART_DEVICE_NAME
+
 
 UART_SET_CONN = 0xc00c7500;
 UART_READ_MODE_INFO = 0xc03c7501;
@@ -23,7 +25,7 @@ def resetAll():
         ioctl(uartfile,UART_SET_CONN, devcon)   
 
 
-def waitNoZeroStatus():
+def wait_no_zero_status():
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=10)
     while True:
         status = uart.Status[port]    
@@ -57,7 +59,7 @@ def setUartMode(mode):
         devcon.Type[port]=0
         devcon.Mode[port]=mode
         ioctl(uartfile,UART_SET_CONN,devcon)
-        status = waitNoZeroStatus()
+        status = wait_no_zero_status()
         if status & lms2012.UART_PORT_CHANGED:
             resetDevice()
         else:

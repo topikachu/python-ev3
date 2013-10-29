@@ -1,14 +1,16 @@
-import os
-import mmap
-import ev3.font
-import re
 import array
+import mmap
+import os
+import re
+
+import ev3.font
+
 
 fontfile = os.path.join(ev3.__path__[0],'font', 'wenquanyi_12pt.bdf')
 size = os.stat(fontfile).st_size
 f = open(fontfile)
 data = mmap.mmap(f.fileno(), size, access=mmap.ACCESS_READ)
-def getFont(c):
+def get_font(c):
     point=ord(c)
     p=re.compile(r"ENCODING %d.*?BITMAP(.*?)ENDCHAR" % point,re.S|re.M)
     m = p.search(data)

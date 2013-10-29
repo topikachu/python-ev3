@@ -1,22 +1,23 @@
+from ctypes import sizeof
+from fcntl import ioctl
+from mmap import *
 import os
 import time
-from mmap import *
-from . import lms2012
-from . import lms2012extra
-from fcntl import ioctl
-from ctypes import sizeof
+
+from . import lms2012, lms2012extra
+
 
 isInitialized=False
 dcmfile=None
 
-def init():
+def open():
     global isInitialized
     if not isInitialized:        
         global dcmfile        
         dcmfile=os.open(lms2012.DCM_DEVICE_NAME,os.O_RDWR)
         isInitialized=True
 
-def setPinMode(port, pin):
+def set_pin_mode(port, pin):
     buf = bytearray('-'*4)
     buf[port]=pin
     os.write(dcmfile,buf);

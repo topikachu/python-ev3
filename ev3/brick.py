@@ -1,16 +1,19 @@
-from rawdevice import *
 import threading
 import time
+
+from rawdevice import *
+
+
 pollingThread=None
 events={}
 
-def init():
-    AnalogDevice.init()
-    UARTDevice.init()
-    MotorDevice.init()
+def open():
+    analogdevice.open()
+    uartdevice.open()
+    motordevice.open()
     for port in range(0,4):
-        AnalogDevice.clearChange(port)
-        UARTDevice.clearChange(port)
+        analogdevice.clear_change(port)
+        uartdevice.clear_change(port)
     
 
 def start():
@@ -25,9 +28,9 @@ def registerEvent(predicate,handle):
     events[predicate]=handle
 
 def close():
-    MotorDevice.close()
-    UARTDevice.close()
-    AnalogDevice.close()
+    motordevice.close()
+    uartdevice.close()
+    analogdevice.close()
 
 class Polling(threading.Thread):
     def __init__(self):

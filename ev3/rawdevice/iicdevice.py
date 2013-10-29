@@ -1,15 +1,12 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from . import lms2012extra
-from fcntl import ioctl
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
+import time
 
+from . import dcm, devcon, lms2012, lms2012extra
 
-from . import devcon
-from . import Dcm
 
 INPUT_DEVICE_NUMBER=4;
 OUTPUT_DEVICE_NUMBER=4;
@@ -22,7 +19,7 @@ iicfile=None
 iicmm=None
 iic=None
 
-def init():
+def open():
     global isInitialized
     if not isInitialized:        
         global iicfile        
@@ -35,7 +32,7 @@ def init():
 
 
 
-def setOperatingMode(port, typ, mode):
+def set_operating_mode(port, typ, mode):
     devcon.Connection[port]=lms2012.CONN_NXT_IIC
     devcon.Type[port]=typ
     devcon.Mode[port]=mode
@@ -43,18 +40,18 @@ def setOperatingMode(port, typ, mode):
     
 
 def reset(port):
-    Dcm.setPinMode(port,'f')
+    dcm.set_pin_mode(port,'f')
     time.sleep(0.1)
     devcon.Connection[port]=lms2012.CONN_NONE
     devcon.Type[port]=0
     devcon.Mode[port]=0
     ioctl(iicfile,lms2012extra.IIC_SET_CONN, devcon)
     time.sleep(0.1)
-    setOperatingMode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
+    set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
     time.sleep(0.1)
-    setOperatingMode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
+    set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
     
-def i2cTransaction(port,deviceAddress, writeBuf, readLen):    
+def i2c_transaction(port,deviceAddress, writeBuf, readLen):    
         iicdata=lms2012.IICDAT()
         iicdata.Port = port
         iicdata.Result = -1

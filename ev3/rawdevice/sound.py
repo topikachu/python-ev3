@@ -1,16 +1,18 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from fcntl import ioctl
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
 import struct
+import time
+
+from . import lms2012
+
 
 isInitialized=False
 soundfile=None
 
-def init():
+def open():
     global isInitialized    
     if not isInitialized:
         global soundfile
@@ -18,7 +20,7 @@ def init():
         isInitialized=True
 
 
-def playTone(frequency, duration, volume=100):
+def play_tone(frequency, duration, volume=100):
     os.write(soundfile,struct.pack('B'*6,lms2012.TONE,volume*13/100,frequency & 0xff,frequency >> 8,duration & 0xff,duration >> 8))
     
 

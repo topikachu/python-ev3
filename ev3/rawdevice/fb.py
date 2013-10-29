@@ -1,5 +1,9 @@
-import ctypes, os, sys
 from ctypes import *
+import ctypes
+import os
+import sys
+
+
 __u16 = c_ushort # /home/pikachu/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/include/asm-generic/int-ll64.h: 21
 __u32 = c_uint # /home/pikachu/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/include/asm-generic/int-ll64.h: 24
 

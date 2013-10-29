@@ -1,9 +1,12 @@
 # -*- coding: utf8
-from ev3.rawdevice import LCD
-import unittest
-import time
 import array
-from ev3.font import getFont
+import time
+import unittest
+
+from ev3.font import get_font
+from ev3.rawdevice import lcd
+
+
 menu_width=16
 menu_height=132
 menu_bits = array.array('B',[
@@ -33,19 +36,19 @@ menu_bits = array.array('B',[
 class TestLCD(unittest.TestCase):
 
     def setUp(self):
-        LCD.init()
+        lcd.open()
 
     
     def test_lcd(self):
-        LCD.black()
+        lcd.black()
         time.sleep(2)
-        LCD.white()
+        lcd.white()
         time.sleep(2)
-        LCD.drawImage(menu_bits,0,0,16,132,0,0,16,64)
+        lcd.draw_image(menu_bits,0,0,16,132,0,0,16,64)
         
 
     def tearDown(self):
-        LCD.close()
+        lcd.close()
 
 
 if __name__ == '__main__':

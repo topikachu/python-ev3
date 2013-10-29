@@ -1,19 +1,21 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from fcntl import ioctl
+import array
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
 import struct
-import array
+import time
+
+from . import lms2012
+
 
 isInitialized=False
 uifile=None
 uimm=None
 ui=None
 
-def init():
+def open():
     global isInitialized
     if not isInitialized:
         global uifile
@@ -24,10 +26,10 @@ def init():
         ui=lms2012.UI.from_buffer(uimm)
         isInitialized=True
 
-def setLed(light):
+def set_led(light):
     os.write(uifile,struct.pack('BB',ord('0')+light,0))
 
-def isPressed(key):
+def is_pressed(key):
     return ui.Pressed[key]
 
 def close():

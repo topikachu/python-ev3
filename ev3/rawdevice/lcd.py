@@ -1,14 +1,13 @@
-import os
-import time
-from mmap import *
-from . import lms2012
-from fcntl import ioctl
+import array
 from ctypes import sizeof
 import datetime
+from fcntl import ioctl
+from mmap import *
+import os
 import struct
-import array
+import time
 
-
+from . import lms2012
 
 
 PixelTab=[
@@ -31,7 +30,7 @@ lcdfile=None
 membuffer=None
 imgbuffer=None
 
-def init():
+def open():
     global isInitialized
     if not isInitialized:
         global lcdfile
@@ -47,8 +46,8 @@ def init():
 
 
 
-def drawImage(src, srcX, srcY, srcWidth, srcHegiht, destX, destY, width, height):
-    """ drawImage(src, srcX, srcY, srcWidth, srcHegiht, destX, destY, width, height):
+def draw_image(src, srcX, srcY, srcWidth, srcHegiht, destX, destY, width, height):
+    """ draw_image(src, srcX, srcY, srcWidth, srcHegiht, destX, destY, width, height):
 
         srcX, destX and width must be multiples of 8
         

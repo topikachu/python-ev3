@@ -1,22 +1,23 @@
 # -*- coding: utf8
-from ev3.rawdevice import Sound
-import unittest
-import time
 import array
+import time
+import unittest
+
+from ev3.rawdevice import sound
 
 
 class TestSound(unittest.TestCase):
 
     def setUp(self):
-        Sound.init()
+        sound.open()
 
     
     def test_lcd(self):
-        Sound.playTone(697, 200)
+        sound.play_tone(697, 200)
         
 
     def tearDown(self):
-        Sound.close()
+        sound.close()
 
 
 if __name__ == '__main__':

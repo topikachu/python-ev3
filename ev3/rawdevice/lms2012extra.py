@@ -1,7 +1,9 @@
-from . import lms2012
 from ctypes import sizeof
-#modify from https://raw.github.com/SpliFF/python-ioctl/master/ioctl.py
 
+from . import lms2012
+
+
+#modify from https://raw.github.com/SpliFF/python-ioctl/master/ioctl.py
 NRBITS = 8
 TYPEBITS = 8
 
