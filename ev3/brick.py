@@ -1,20 +1,36 @@
 import threading
 import time
 
-from rawdevice import analogdevice, uartdevice, motordevice
+from rawdevice import analogdevice, dcm, iicdevice, lcd, motordevice, sound, uartdevice, ui
 
 
 pollingThread=None
 events={}
 
-def open_device():
+def open_all_device():
     analogdevice.open_device()
-    uartdevice.open_device()
+    dcm.open_device()
+    iicdevice.open_device()
+    lcd.open_device()
     motordevice.open_device()
+    sound.open_device()
+    uartdevice.open_device()
+    ui.open_device()
+    
     for port in range(0,4):
         analogdevice.clear_change(port)
-        uartdevice.clear_change(port)
+        uartdevice.reset(port)
+        iicdevice.reset(port)
     
+def close_all_device():
+    ui.open_device()
+    uartdevice.open_device()
+    sound.open_device()
+    motordevice.open_device()
+    lcd.open_device()    
+    iicdevice.open_device()
+    dcm.open_device()
+    analogdevice.open_device()
 
 def start():
     global pollingThread

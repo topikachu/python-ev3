@@ -1,7 +1,8 @@
 from rawdevice import uartdevice
 
 
-class EV3ColorSensor():
+import sensor
+class EV3ColorSensor(sensor.UartSensor):
 
     NONE=0
     BLACK=1
@@ -14,23 +15,21 @@ class EV3ColorSensor():
 
     def __init__ (self,port):
         self.port=port
-    def set_mode(self,mode):
-        self.mode=mode
-        uartdevice.set_mode(self.port,mode)
-    def setReflectMode(self):
+        super(EV3ColorSensor, self).__init__(port)
+    def set_reflect_mode(self):
         self.set_mode(0)
-    def setAmbientMode(self):
+    def set_ambient_mode(self):
         self.set_mode(1)
-    def setColorMode(self):
+    def set_color_mode(self):
         self.set_mode(2)
-    def setRefRAWMode(self):
+    def set_ref_raw_mode(self):
         self.set_mode(3)
-    def setRGBRAWMode(self):
+    def set_rgb_raw_mode(self):
         self.set_mode(4)
-    def setColCalMode(self)    :
+    def set_col_cal_mode(self)    :
         self.set_mode(5)
-    def getValue(self):
-        return uartdevice.get_value_byte(self.port)
-    def colorToString(self):
-        return ["NONE","BALCK","GREEN","YELLOW","RED","WHITE","BROWN"][self.getValue()]
+    
+    def color_to_string(self):
+        print self.getValue()
+        return ["NONE","BALCK","BLUE","GREEN","YELLOW","RED","WHITE","BROWN"][self.getValue()]
 

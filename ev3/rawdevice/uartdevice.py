@@ -50,7 +50,6 @@ def wait_no_zero_status(port):
 def clear_change(port):
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=1)
     while True:
-
         status = _uart.Status[port]
         if (status & lms2012.UART_DATA_READY) != 0 and (status & lms2012.UART_PORT_CHANGED) == 0:
             break
