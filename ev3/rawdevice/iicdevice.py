@@ -5,7 +5,7 @@ from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
 import time
 
-from . import dcm, devcon, lms2012, lms2012extra
+from . import dcm, lms2012, lms2012extra
 
 
 INPUT_DEVICE_NUMBER=4;
@@ -18,10 +18,12 @@ _initialized=False
 _iicfile=None
 _iicmm=None
 _iic=None
-
+_devcon=None
 def open_device():
     global _initialized
     if not _initialized:        
+        global _devcon
+        from . import devcon as _devcon
         global _iicfile        
         _iicfile=os.open(lms2012.IIC_DEVICE_NAME,os.O_RDWR)
         global _iicmm        
@@ -33,19 +35,19 @@ def open_device():
 
 
 def set_operating_mode(port, typ, mode):
-    devcon.Connection[port]=lms2012.CONN_NXT_IIC
-    devcon.Type[port]=typ
-    devcon.Mode[port]=mode
-    ioctl(_iicfile, lms2012extra.IIC_SET_CONN, devcon);        
+    _devcon.Connection[port]=lms2012.CONN_NXT_IIC
+    _devcon.Type[port]=typ
+    _devcon.Mode[port]=mode
+    ioctl(_iicfile, lms2012extra.IIC_SET_CONN, _devcon);        
     
 
 def reset(port):
     dcm.set_pin_mode(port,'f')
     time.sleep(0.1)
-    devcon.Connection[port]=lms2012.CONN_NONE
-    devcon.Type[port]=0
-    devcon.Mode[port]=0
-    ioctl(_iicfile,lms2012extra.IIC_SET_CONN, devcon)
+    _devcon.Connection[port]=lms2012.CONN_NONE
+    _devcon.Type[port]=0
+    _devcon.Mode[port]=0
+    ioctl(_iicfile,lms2012extra.IIC_SET_CONN, _devcon)
     time.sleep(0.1)
     set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
     time.sleep(0.1)

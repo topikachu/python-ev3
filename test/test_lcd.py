@@ -39,10 +39,13 @@ class TestLCD(unittest.TestCase):
 
     
     def test_lcd(self):
+        print "lcd black!"
         lcd.black()
         time.sleep(2)
+        print "lcd white!"
         lcd.white()
         time.sleep(2)
+        print "lcd draw image!"
         lcd.draw_image(menu_bits,0,0,16,132,0,0,16,64)
         
 

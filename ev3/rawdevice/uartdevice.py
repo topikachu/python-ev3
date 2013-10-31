@@ -5,7 +5,7 @@ from mmap import mmap, MAP_SHARED, PROT_READ, PROT_WRITE
 import os
 import time
 
-from . import devcon, lms2012, lms2012extra
+from . import  lms2012, lms2012extra
 
 
 INPUT_DEVICE_NUMBER=4;
@@ -18,10 +18,12 @@ _initialized=False
 _uartfile=None
 _uarmm=None
 _uart=None
-
+_devcon=None
 def open_device():
     global _initialized
-    if not _initialized:        
+    if not _initialized: 
+        global _devcon
+        from . import devcon as _devcon
         global _uartfile        
         _uartfile=os.open(lms2012.UART_DEVICE_NAME,os.O_RDWR)
         print _uartfile
@@ -48,25 +50,26 @@ def wait_no_zero_status(port):
 def clear_change(port):
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=1)
     while True:
+
         status = _uart.Status[port]
         if (status & lms2012.UART_DATA_READY) != 0 and (status & lms2012.UART_PORT_CHANGED) == 0:
             break
         if datetime.datetime.now()>timeout:
             break
-        devcon.Connection[port]=lms2012.CONN_INPUT_UART
-        devcon.Type[port]=0
-        devcon.Mode[port]=0
-        ioctl(_uartfile,lms2012extra.UART_CLEAR_CHANGED, devcon)
+        _devcon.Connection[port]=lms2012.CONN_INPUT_UART
+        _devcon.Type[port]=0
+        _devcon.Mode[port]=0
+        ioctl(_uartfile,lms2012extra.UART_CLEAR_CHANGED, _devcon)
         _uart.Status[port] = _uart.Status[port] & ~ lms2012.UART_PORT_CHANGED
         time.sleep(0.01)
 
 def set_mode(port,mode):
     timeout=datetime.datetime.now()+datetime.timedelta(seconds=5)
     while (True):
-        devcon.Connection[port]=lms2012.CONN_INPUT_UART
-        devcon.Type[port]=0
-        devcon.Mode[port]=mode
-        ioctl(_uartfile,lms2012extra.UART_SET_CONN,devcon)
+        _devcon.Connection[port]=lms2012.CONN_INPUT_UART
+        _devcon.Type[port]=0
+        _devcon.Mode[port]=mode
+        ioctl(_uartfile,lms2012extra.UART_SET_CONN,_devcon)
         status = wait_no_zero_status(port)
         if status & lms2012.UART_PORT_CHANGED:
             clear_change(port)
@@ -84,10 +87,10 @@ def get_value_byte(port):
     return get_value_bytes(port)[0]
 
 def reset(port):
-    devcon.Connection[port]=lms2012.CONN_NONE
-    devcon.Type[port]=0
-    devcon.Mode[port]=0
-    ioctl(_uartfile,lms2012extra.UART_SET_CONN, devcon)
+    _devcon.Connection[port]=lms2012.CONN_NONE
+    _devcon.Type[port]=0
+    _devcon.Mode[port]=0
+    ioctl(_uartfile,lms2012extra.UART_SET_CONN, _devcon)
 
 def get_mode_info(port,mode):
     uartCtl=lms2012.UARTCTL()
