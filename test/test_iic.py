@@ -4,7 +4,7 @@ import unittest
 from ev3.rawdevice import dcm, iicdevice
 
 
-class TestUARTDevice(unittest.TestCase):
+class TestIICDevice(unittest.TestCase):
 
     def setUp(self):
         dcm.open_device()
@@ -25,12 +25,18 @@ class TestUARTDevice(unittest.TestCase):
         print bytearray(value).decode()
         buf=bytearray([0x41,ord('I')])
         iicdevice.i2c_transaction(0,0x02,buf,0)
-        i=0
-        while i<10:
-            value = iicdevice.i2c_transaction(0,0x02,bytearray([0x42]),1)
-            time.sleep(0)
-            print value[0]
-            i+=1
+        print "test iic psp control. press button!"
+        round=0
+        while round<5:
+            print "round %d" % round
+            time.sleep(3)
+            round+=1
+            i=0        
+            while i<30:
+                value = iicdevice.i2c_transaction(0,0x02,bytearray([0x42]),1)
+                time.sleep(0)
+                print value[0]
+                i+=1
         
 
     def tearDown(self):

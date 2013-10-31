@@ -48,6 +48,8 @@ def reset(port):
     ioctl(_iicfile,lms2012extra.IIC_SET_CONN, devcon)
     time.sleep(0.1)
     set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
+    time.sleep(0.1)
+    set_operating_mode(port,lms2012.TYPE_IIC_UNKNOWN, 255);
     
     
 def i2c_transaction(port,deviceAddress, writeBuf, readLen):    

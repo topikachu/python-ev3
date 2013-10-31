@@ -29,7 +29,7 @@ class TestUARTDevice(unittest.TestCase):
         uartdevice.reset(2)
 
     def tearDown(self):
-        uartdevice.close_device()()
+        uartdevice.close_device()
 
     
 

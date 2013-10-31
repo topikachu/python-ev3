@@ -14,7 +14,7 @@ class TestAnalogDevice(unittest.TestCase):
         print "Touch Sensor test. Press the button"
         i=0
         while i<10:
-            print analogdevice.get_pin6(0)            
+            print analogdevice.get_pin6(1)            
             time.sleep(1)
             i+=1
 

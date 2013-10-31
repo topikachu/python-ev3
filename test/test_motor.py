@@ -18,7 +18,7 @@ class TestMotorDevice(unittest.TestCase):
             print motordevice.get_tacho(0)
             print motordevice.get_speed(0)
             time.sleep(1)
-            i+=1
+            i+=3
         motordevice.stop(0)
     def tearDown(self):
         motordevice.close_device()
