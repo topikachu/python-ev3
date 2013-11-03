@@ -7,6 +7,7 @@ import time
 
 from . import  lms2012, lms2012extra
 
+from ..error import SensorError
 
 INPUT_DEVICE_NUMBER=4;
 OUTPUT_DEVICE_NUMBER=4;
@@ -26,7 +27,6 @@ def open_device():
         from . import devcon as _devcon
         global _uartfile        
         _uartfile=os.open(lms2012.UART_DEVICE_NAME,os.O_RDWR)
-        print _uartfile
         global uartmm        
         uartmm=mmap(fileno=_uartfile, length=sizeof(lms2012.UART),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)
         global _uart
@@ -34,13 +34,13 @@ def open_device():
         _initialized=True
 
 def wait_no_zero_status(port):
-    timeout=datetime.datetime.now()+datetime.timedelta(seconds=1)
+    timeout=datetime.datetime.now()+datetime.timedelta(seconds=10)
     while True:
         status = _uart.Status[port]    
         if status!=0:
             break
         if datetime.datetime.now()>timeout:
-            break
+            raise SensorError("wait zero status timeout at port %d", port)
         time.sleep(0.025)
     return status
 
@@ -70,6 +70,7 @@ def set_mode(port,mode):
         _devcon.Mode[port]=mode
         ioctl(_uartfile,lms2012extra.UART_SET_CONN,_devcon)
         status = wait_no_zero_status(port)
+        #print "uart status %d" % status
         if status & lms2012.UART_PORT_CHANGED:
             clear_change(port)
         else:

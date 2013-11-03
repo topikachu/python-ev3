@@ -4,7 +4,7 @@ import unittest
 from ev3.rawdevice import analogdevice
 
 
-class TestAnalogDevice(unittest.TestCase):
+class TestEv3Sensors(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         analogdevice.open_device()

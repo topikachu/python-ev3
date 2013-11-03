@@ -59,10 +59,7 @@ def start(ports):
     os.write(_pwmfile, struct.pack('2B',lms2012.opOUTPUT_START,ports))
 def stop(ports,brake=0):
     os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_STOP,ports,brake))
-def power(ports,power):
-    os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_POWER,ports,power))
-def speed(ports,speed):
-    os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_SPEED,ports,speed))
+
 def polarity(ports,polarity=1):
     os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_POLARITY,ports,polarity))
     
@@ -73,8 +70,17 @@ def ready(ports):
 
 #def position(ports,pos):
 #    os.write(_pwmfile, struct.pack('2B',lms2012.opOUTPUT_START,ports))
-       
-def step_power(ports, power, ramp_up_steps, const_speed_steps,ramp_down_steps,brake=0):
+def power(ports,power,startmotor=True):
+    os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_POWER,ports,power))
+    if startmotor:
+        start(ports)
+    
+def speed(ports,speed,startmotor=True):
+    os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_SPEED,ports,speed))
+    if startmotor:
+        start(ports)
+        
+def step_power(ports, power, ramp_up_steps, const_speed_steps,ramp_down_steps,brake=0,startmotor=True):
     steppoweer=lms2012.STEPPOWER()
     steppoweer.Cmd=lms2012.opOUTPUT_STEP_POWER
     steppoweer.Nos    =  ports
@@ -84,9 +90,11 @@ def step_power(ports, power, ramp_up_steps, const_speed_steps,ramp_down_steps,br
     steppoweer.Step3  =  ramp_down_steps;
     steppoweer.Brake  =  brake;
     os.write(_pwmfile,steppoweer)
+    if startmotor:
+        start(ports)
     
     
-def time_power(ports, power, ramp_up_time, const_speed_time,ramp_down_time,brake=0):
+def time_power(ports, power, ramp_up_time, const_speed_time,ramp_down_time,brake=0,startmotor=True):
     timepower=lms2012.TIMEPOWER()
     timepower.Cmd    =  lms2012.opOUTPUT_TIME_POWER;
     timepower.Nos    =  ports
@@ -96,8 +104,10 @@ def time_power(ports, power, ramp_up_time, const_speed_time,ramp_down_time,brake
     timepower.Time3  =  ramp_down_time
     timepower.Brake  =  brake
     os.write(_pwmfile,timepower)
+    if startmotor:
+        start(ports)
     
-def step_speed(ports, speed, ramp_up_steps, const_speed_steps,ramp_down_steps,brake=0):
+def step_speed(ports, speed, ramp_up_steps, const_speed_steps,ramp_down_steps,brake=0,startmotor=True):
     stepspeed = lms2012.STEPSPEED()
     stepspeed.Cmd    =   lms2012.opOUTPUT_STEP_SPEED;
     stepspeed.Nos    =  ports;
@@ -107,7 +117,10 @@ def step_speed(ports, speed, ramp_up_steps, const_speed_steps,ramp_down_steps,br
     stepspeed.Step3  =  ramp_down_steps;
     stepspeed.Brake  =  brake;
     os.write(_pwmfile,stepspeed)
-def time_speed(ports, speed, ramp_up_time, const_speed_time,ramp_down_time,brake=0):
+    if startmotor:
+        start(ports)
+        
+def time_speed(ports, speed, ramp_up_time, const_speed_time,ramp_down_time,brake=0,startmotor=True):
     timespeed = lms2012.TIMESPEED()
     timespeed.Cmd    =  lms2012.opOUTPUT_TIME_SPEED;
     timespeed.Nos    =  ports
@@ -117,8 +130,10 @@ def time_speed(ports, speed, ramp_up_time, const_speed_time,ramp_down_time,brake
     timespeed.Time3  =  ramp_down_time
     timespeed.Brake  =  brake
     os.write(_pwmfile,timespeed)
+    if startmotor:
+        start(ports)
     
-def step_sync(ports, speed, turn=0, step=0,brake=0):
+def step_sync(ports, speed, turn=0, step=0,brake=0,startmotor=True):
     stepsync= lms2012.STEPSYNC()
     stepsync.Cmd   =   lms2012.opOUTPUT_STEP_SYNC;
     stepsync.Nos   =  ports
@@ -127,8 +142,10 @@ def step_sync(ports, speed, turn=0, step=0,brake=0):
     stepsync.Step  =  step
     stepsync.Brake =  brake
     os.write(_pwmfile,stepsync)
+    if startmotor:
+        start(ports)
 
-def time_sync(ports, speed, turn=0, time=0,brake=0):
+def time_sync(ports, speed, turn=0, time=0,brake=0,startmotor=True):
     timesync=lms2012.TIMESYNC()
     timesync.Cmd   =  lms2012.opOUTPUT_TIME_SYNC;
     timesync.Nos   =  ports
@@ -137,15 +154,20 @@ def time_sync(ports, speed, turn=0, time=0,brake=0):
     timesync.Time  =  time
     timesync.Brake =  brake
     os.write(_pwmfile,timesync)
+    if startmotor:
+        start(ports)
 
 
 def clear_steps(ports):
-    pass
+    struct.pack('2B',lms2012.opOUTPUT_CLR_COUNT, ports)
+   
 
 def get_speed(port):
     return _motodata[port].Speed
-def get_steps(port):
+def get_tacho(port):
     return _motodata[port].TachoCounts
+def get_count(port):
+    return _motodata[port].TachoSensor
 
 
 

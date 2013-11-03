@@ -24,8 +24,10 @@ def get_pin6(port):
 def get_pin1(port):
     return _analog.InPin1[port]
 
+def get_analog():
+    return _analog
+
 def get_connection_type(port):
-    print lms2012.CtoV(_analog.InPin1[port])
     return _analog.InConn[port]
 
 

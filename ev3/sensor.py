@@ -6,7 +6,6 @@ class UartSensor(object):
     def __init__ (self,port):
         self.port=port
         uartdevice.reset(port)
-        self.set_mode(0)
     def set_mode(self,mode,delay=0):
         time.sleep(delay)
         self.mode=mode
@@ -25,7 +24,7 @@ class AnalogSensor(object):
         self.port=port
         analogdevice.clear_change(port)
     def get_pin1_value(self):
-        analogdevice.get_pin1(self.port)
+        return analogdevice.get_pin1(self.port)
         
     def get_pin6_value(self):
-        analogdevice.get_pin6(self.port)
+        return analogdevice.get_pin6(self.port)

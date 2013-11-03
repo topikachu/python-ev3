@@ -1,5 +1,5 @@
 import sensor
-
+from rawdevice import lms2012
 
 
 class EV3ColorSensor(sensor.UartSensor):
@@ -30,7 +30,6 @@ class EV3ColorSensor(sensor.UartSensor):
         self.set_mode(5)
     
     def color_to_string(self):
-        print self.get_value()
         return ["NONE","BALCK","BLUE","GREEN","YELLOW","RED","WHITE","BROWN"][self.get_value()]
 
 class EV3IRSensor(sensor.UartSensor):
@@ -45,6 +44,11 @@ class EV3IRSensor(sensor.UartSensor):
     BUTTON_CENTRE_BEACON=9
     BOTTOM_LEFT_TOP_LEFT=10
     BUTTON_TOP_RIGHT_BOTTOM_RIGHT=11
+    
+    CHANNEL_1 = 0
+    CHANNEL_2 = 1
+    CHANNEL_3 = 2
+    CHANNEL_4 = 3
     
     
     def __init__ (self,port):
@@ -68,13 +72,13 @@ class EV3IRSensor(sensor.UartSensor):
         """
         use in remote mode
         """
-        self.get_value_bytes()[chan]
+        return self.get_value_bytes()[chan]
         
     def get_direction_and_distance(self,chan=0):
         """
         use in seek mode
         """
-        return self.get_all_direction_and_distance[chan]
+        return self.get_all_direction_and_distance()[chan]
         
     def get_all_direction_and_distance(self):
         """
@@ -93,7 +97,7 @@ class EV3TouchSensor(sensor.AnalogSensor):
         self.port=port
         super(EV3TouchSensor,self).__init__(port)
     def is_pressed(self):
-        return self.get_pin6_value()
+        return self.get_pin6_value()> lms2012.ADC_REF/2
     
 class EV3Motor():
     pass
