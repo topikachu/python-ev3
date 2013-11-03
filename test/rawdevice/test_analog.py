@@ -5,8 +5,8 @@ from ev3.rawdevice import analogdevice
 
 
 class TestAnalogDevice(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         analogdevice.open_device()
 
     
@@ -17,8 +17,8 @@ class TestAnalogDevice(unittest.TestCase):
             print analogdevice.get_pin6(1)            
             time.sleep(1)
             i+=1
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         analogdevice.close_device()
 
 

@@ -5,8 +5,8 @@ from ev3.rawdevice import uartdevice
 
 
 class TestUARTDevice(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         uartdevice.open_device()
 
     def test_setMode(self):
@@ -27,8 +27,8 @@ class TestUARTDevice(unittest.TestCase):
             i+=1
 
         uartdevice.reset(2)
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         uartdevice.close_device()
 
     

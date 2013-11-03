@@ -33,8 +33,8 @@ menu_bits = array.array('B',[
   0x71, 0x04, 0xD9, 0x04, 0x8D, 0x05, 0x01, 0x04, 0xFF, 0x07, 0x00, 0x00, 
   ]);
 class TestLCD(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         lcd.open_device()
 
     
@@ -48,8 +48,8 @@ class TestLCD(unittest.TestCase):
         print "lcd draw image!"
         lcd.draw_image(menu_bits,0,0,16,132,0,0,16,64)
         
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         lcd.close_device()
 
 

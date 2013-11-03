@@ -1,13 +1,18 @@
 import time
 import unittest
 
-from ev3 import brick
+from ev3 import ev3
 
-
+def setUpModule():
+    ev3.open_all_device()
+    
+def tearDownModule():
+    ev3.close_all_device()
 class TestAnalogDevice(unittest.TestCase):
-
-    def setUp(self):
-        brick.open_all_device()
+    @classmethod
+    def setUpClass(cls):
+        pass
+        
 
     
     def test_ev3_color_sensor(self):
@@ -23,8 +28,9 @@ class TestAnalogDevice(unittest.TestCase):
             i+=1
 
         colorSensor.reset()
-    def tearDown(self):
-        brick.close_all_device()
+    def tearDownClass(self):
+        pass
+        
 
 
 if __name__ == '__main__':

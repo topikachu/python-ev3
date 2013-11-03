@@ -5,8 +5,8 @@ from ev3.rawdevice import dcm, iicdevice
 
 
 class TestIICDevice(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         dcm.open_device()
         iicdevice.open_device()
 
@@ -38,8 +38,8 @@ class TestIICDevice(unittest.TestCase):
                 print value[0]
                 i+=1
         
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         iicdevice.close_device()
         dcm.close_device()
 

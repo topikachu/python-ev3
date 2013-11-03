@@ -534,55 +534,55 @@ class PosixLibraryLoader(LibraryLoader):
 
 # Windows
 
-class _WindowsLibrary(object):
-    def __init__(self, path):
-        self.cdll = ctypes.cdll.LoadLibrary(path)
-        self.windll = ctypes.windll.LoadLibrary(path)
-
-    def __getattr__(self, name):
-        try: return getattr(self.cdll,name)
-        except AttributeError:
-            try: return getattr(self.windll,name)
-            except AttributeError:
-                raise
-
-class WindowsLibraryLoader(LibraryLoader):
-    name_formats = ["%s.dll", "lib%s.dll", "%slib.dll"]
-
-    def load_library(self, libname):
-        try:
-            result = LibraryLoader.load_library(self, libname)
-        except ImportError:
-            result = None
-            if os.path.sep not in libname:
-                for name in self.name_formats:
-                    try:
-                        result = getattr(ctypes.cdll, name % libname)
-                        if result:
-                            break
-                    except WindowsError:
-                        result = None
-            if result is None:
-                try:
-                    result = getattr(ctypes.cdll, libname)
-                except WindowsError:
-                    result = None
-            if result is None:
-                raise ImportError("%s not found." % libname)
-        return result
-
-    def load(self, path):
-        return _WindowsLibrary(path)
-
-    def getplatformpaths(self, libname):
-        if os.path.sep not in libname:
-            for name in self.name_formats:
-                dll_in_current_dir = os.path.abspath(name % libname)
-                if os.path.exists(dll_in_current_dir):
-                    yield dll_in_current_dir
-                path = ctypes.util.find_library(name % libname)
-                if path:
-                    yield path
+# class _WindowsLibrary(object):
+#     def __init__(self, path):
+#         self.cdll = ctypes.cdll.LoadLibrary(path)
+#         self.windll = ctypes.windll.LoadLibrary(path)
+# 
+#     def __getattr__(self, name):
+#         try: return getattr(self.cdll,name)
+#         except AttributeError:
+#             try: return getattr(self.windll,name)
+#             except AttributeError:
+#                 raise
+# 
+# class WindowsLibraryLoader(LibraryLoader):
+#     name_formats = ["%s.dll", "lib%s.dll", "%slib.dll"]
+# 
+#     def load_library(self, libname):
+#         try:
+#             result = LibraryLoader.load_library(self, libname)
+#         except ImportError:
+#             result = None
+#             if os.path.sep not in libname:
+#                 for name in self.name_formats:
+#                     try:
+#                         result = getattr(ctypes.cdll, name % libname)
+#                         if result:
+#                             break
+#                     except WindowsError:
+#                         result = None
+#             if result is None:
+#                 try:
+#                     result = getattr(ctypes.cdll, libname)
+#                 except WindowsError:
+#                     result = None
+#             if result is None:
+#                 raise ImportError("%s not found." % libname)
+#         return result
+# 
+#     def load(self, path):
+#         return _WindowsLibrary(path)
+# 
+#     def getplatformpaths(self, libname):
+#         if os.path.sep not in libname:
+#             for name in self.name_formats:
+#                 dll_in_current_dir = os.path.abspath(name % libname)
+#                 if os.path.exists(dll_in_current_dir):
+#                     yield dll_in_current_dir
+#                 path = ctypes.util.find_library(name % libname)
+#                 if path:
+#                     yield path
 
 # Platform switching
 
@@ -591,8 +591,8 @@ class WindowsLibraryLoader(LibraryLoader):
 
 loaderclass = {
     "darwin":   DarwinLibraryLoader,
-    "cygwin":   WindowsLibraryLoader,
-    "win32":    WindowsLibraryLoader
+#     "cygwin":   WindowsLibraryLoader,
+#     "win32":    WindowsLibraryLoader
 }
 
 loader = loaderclass.get(sys.platform, PosixLibraryLoader)()

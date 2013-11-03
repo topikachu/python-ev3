@@ -5,8 +5,8 @@ from ev3.rawdevice import ui
 
 
 class TestUIDevice(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ui.open_device()
 
     
@@ -25,8 +25,8 @@ class TestUIDevice(unittest.TestCase):
             print ui.is_pressed(0)
             time.sleep(1)
             i+=1
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         ui.close_device()
 
 
