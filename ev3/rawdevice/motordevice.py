@@ -10,7 +10,7 @@ _initialized=False
 _pwmfile=None
 _motorfile=None
 _motormm=None
-_motodata=None
+_motordata=None
 
 """
 opOUTPUT_GET_TYPE     LAYER   NO       *TYPE                                   // Get output device type
@@ -40,14 +40,14 @@ def open_device():
     global _initialized
     if not _initialized:
         global _pwmfile
-        _pwmfile=os.open(lms2012.PWM_DEVICE_NAME,os.O_RDWR)
+        _pwmfile=os.open(lms2012.PWM_DEVICE_NAME,os.O_RDWR| os.O_SYNC)
         global _motorfile
-        _motorfile=os.open(lms2012.MOTOR_DEVICE_NAME,os.O_RDWR)
+        _motorfile=os.open(lms2012.MOTOR_DEVICE_NAME,os.O_RDWR | os.O_SYNC)
         MOTORDATAArrray=lms2012.MOTORDATA * 4
         global _motormm
         _motormm=mmap(fileno=_motorfile, length=sizeof(MOTORDATAArrray),flags=MAP_SHARED,prot=PROT_READ | PROT_WRITE, offset=0)    
-        global _motodata
-        _motodata=MOTORDATAArrray.from_buffer(_motormm)
+        global _motordata
+        _motordata=MOTORDATAArrray.from_buffer(_motormm)
         _initialized=True
         os.write(_pwmfile, struct.pack('B',lms2012.opPROGRAM_START))
 
@@ -61,7 +61,7 @@ def stop(ports,brake=0):
     os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_STOP,ports,brake))
 
 def polarity(ports,polarity=1):
-    os.write(_pwmfile, struct.pack('3B',lms2012.opOUTPUT_POLARITY,ports,polarity))
+    os.write(_pwmfile, struct.pack('BBb',lms2012.opOUTPUT_POLARITY,ports,polarity))
     
 def test(ports):
     pass
@@ -159,15 +159,24 @@ def time_sync(ports, speed, turn=0, time=0,brake=0,startmotor=True):
 
 
 def clear_steps(ports):
-    struct.pack('2B',lms2012.opOUTPUT_CLR_COUNT, ports)
+    os.write(_pwmfile, struct.pack('2B',lms2012.opOUTPUT_CLR_COUNT, ports))
+    port = 0
+    while port<4:
+        if (ports & (1<<port)):
+            _motordata[port].TachoSensor = 0
+        port+=1
+
+        
+        
+   
    
 
 def get_speed(port):
-    return _motodata[port].Speed
+    return _motordata[port].Speed
 def get_tacho(port):
-    return _motodata[port].TachoCounts
-def get_count(port):
-    return _motodata[port].TachoSensor
+    return _motordata[port].TachoCounts
+def get_sensor(port):
+    return _motordata[port].TachoSensor
 
 
 

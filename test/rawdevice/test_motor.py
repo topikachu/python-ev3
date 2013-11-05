@@ -8,8 +8,8 @@ PORTS=0X06 # (0X02+0X06 ) B,C
 
 def print_motor_info():
     print("moter B count %d, speed %d\nmoter C count %d, speed %d" % \
-                                               (motordevice.get_count(1),motordevice.get_speed(1),\
-                                                motordevice.get_count(2),motordevice.get_speed(2)))
+                                               (motordevice.get_sensor(1),motordevice.get_speed(1),\
+                                                motordevice.get_sensor(2),motordevice.get_speed(2)))
 
 class TestMotorDevice(unittest.TestCase):
     @classmethod
@@ -23,42 +23,42 @@ class TestMotorDevice(unittest.TestCase):
         
           
     def test_power(self):
-        motordevice.power(PORTS,50)
-        test_util.count_down(5, print_motor_info )
+        motordevice.power(PORTS,20)
+        test_util.wait(5, print_motor_info )
         
     def test_speed(self):
-        motordevice.speed(PORTS,50)        
-        test_util.count_down(5, print_motor_info )
+        motordevice.speed(PORTS,20)        
+        test_util.wait(5, print_motor_info )
         
      
 
     def test_step_power(self):        
-        motordevice.step_power(PORTS, 50, 180, 720, 180, 1)        
-        test_util.count_down(6, print_motor_info)
+        motordevice.step_power(PORTS, 20, 180, 720, 180, 1)        
+        test_util.wait(6, print_motor_info)
          
     def test_time_power(self):        
-        motordevice.time_power(PORTS, 50, 2000,5000 , 2000, 1)
-        test_util.count_down(6, print_motor_info)
+        motordevice.time_power(PORTS, 20, 2000,5000 , 2000, 1)
+        test_util.wait(6, print_motor_info)
         
     def test_step_speed(self):
-        motordevice.step_speed(PORTS, 50, 180, 720, 180, 1)
-        test_util.count_down(10, print_motor_info)
+        motordevice.step_speed(PORTS, 20, 180, 720, 180, 1)
+        test_util.wait(10, print_motor_info)
         
     def test_time_speed(self):
-        motordevice.time_speed(PORTS, 50, 2000,5000 , 2000, 1)
-        test_util.count_down(10, print_motor_info)
+        motordevice.time_speed(PORTS, 20, 2000,5000 , 2000, 1)
+        test_util.wait(10, print_motor_info)
     
     
     def test_step_sync(self):
-        motordevice.step_sync(PORTS, 50, 50, 1000, 1)        
-        test_util.count_down(10, print_motor_info)   
+        motordevice.step_sync(PORTS, 20, 50, 1000, 1)        
+        test_util.wait(10, print_motor_info)   
         
         
         
     def test_time_sync(self):
-        motordevice.time_sync(PORTS, 50, 50, 5000, 1)
+        motordevice.time_sync(PORTS, 20, 50, 5000, 1)
         
-        test_util.count_down(5, print_motor_info)
+        test_util.wait(5, print_motor_info)
         
     def tearDown(self):
         motordevice.stop(PORTS,brake=1)
