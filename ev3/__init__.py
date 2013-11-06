@@ -1,4 +1,4 @@
-import font
-import rawdevice
+__all__ = ["lego"]
+import lego
 
 

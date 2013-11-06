@@ -12,7 +12,7 @@ class TestIICDevice(unittest.TestCase):
 
     def test_setMode(self):
         iicdevice.reset(0)
-        dcm.set_pin_mode(0,ord('F'));
+        #dcm.set_pin_mode(0,ord('F'));
         
         #iicdevice.i2c_transaction(0,0x02,buf,0)
         
@@ -35,7 +35,7 @@ class TestIICDevice(unittest.TestCase):
             while i<30:
                 value = iicdevice.i2c_transaction(0,0x02,bytearray([0x42]),1)
                 time.sleep(0)
-                print value[0]
+                print hex(value[0] & 0xff)
                 i+=1
         
     @classmethod

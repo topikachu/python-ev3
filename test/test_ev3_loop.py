@@ -1,22 +1,24 @@
 import time
 import unittest
 
-from ev3 import ev3
-
+from ev3 import robot
+import ev3.lego
 def setUpModule():
-    ev3.open_all_device()
+    robot.open_all_devices()
     
 def tearDownModule():
-    ev3.close_all_device()
-class TestBattery(unittest.TestCase):
+    robot.close_all_devices()
+class TestEv3Loop(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         pass
         
 
     
-    def test_battery(self):
-        print ev3.get_battery();
+    def test_loop(self):
+        robot.open_all_devices()
+        
+        print robot.get_battery();
         
 
         

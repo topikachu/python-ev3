@@ -15,5 +15,5 @@ def wait(sec,f=_dumy):
         f()
         if datetime.datetime.now()>timeout:
             break
-        time.sleep(1)
+        #time.sleep(1)
                 

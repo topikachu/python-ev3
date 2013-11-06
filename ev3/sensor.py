@@ -1,5 +1,6 @@
 from rawdevice import uartdevice
 from rawdevice import analogdevice
+from rawdevice import iicdevice
 import time
 class UartSensor(object):
     
@@ -28,3 +29,29 @@ class AnalogSensor(object):
         
     def get_pin6_value(self):
         return analogdevice.get_pin6(self.port)
+    
+    
+class IICSensor(object):
+    def __init__(self,port,address):
+        self.port=port
+        iicdevice.reset(port)
+        self.address=address
+    def transaction(self, send_buf, read_length):
+        values=iicdevice.i2c_transaction(self.port, self.address, send_buf, read_length)
+        return values[:read_length]
+    def read(self, register, read_length=32):
+        values=iicdevice.i2c_transaction(self.port, self.address, [register], read_length)
+        return values[:read_length]
+    def read_single_byte(self, register):
+        values=iicdevice.i2c_transaction(self.port, self.address, [register], 1)
+        return values[0]       
+    def command(self, register, cmd):
+        iicdevice.i2c_transaction(self.port, self.address, [register, cmd],0)
+    
+    def version(self):
+        return bytearray(self.read(0x00,8)).decode()
+    def vendor(self):
+        return bytearray(self.read(0x08,8)).decode()
+    def device(self):
+        return bytearray(self.read(0x10,8)).decode()
+

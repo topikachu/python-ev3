@@ -3,6 +3,15 @@ import time
 
 from rawdevice import analogdevice, dcm, iicdevice, lcd, motordevice, sound, uartdevice, ui, lms2012
 
+
+UP_BUTTON=0
+ENTER_BUTTON=1
+DOWN_BUTTON=2
+RIGHT_BUTTON=3
+LEFT_BUTTON=4
+BACK_BUTTON=5
+
+
 _AMP_CIN= 22.0 
 _AMP_VIN  =  0.5
 _VCE  =   0.05
@@ -29,7 +38,7 @@ MOTOR_C_BIT=4
 MOTOR_D_BIT=8
 
 
-def open_all_device():
+def open_all_devices():
     analogdevice.open_device()
     dcm.open_device()
     iicdevice.open_device()
@@ -44,7 +53,7 @@ def open_all_device():
         uartdevice.reset(port)
         iicdevice.reset(port)
     
-def close_all_device():
+def close_all_devices():
     ui.close_device()
     uartdevice.close_device()
     sound.close_device()
@@ -55,13 +64,9 @@ def close_all_device():
     analogdevice.close_device()
 
 def start():
-    global pollingThread
-    pollingThread=Polling()
-    pollingThread.daemon = True
-    pollingThread.start()
+    
+    run()
 
-def convert(val):
-    return float(val)*lms2012.ADC_REF/lms2012.ADC_RES;
 
 def get_battery():
     CinV = lms2012.CtoV(float(analogdevice.get_analog().BatteryCurrent))/_AMP_CIN
@@ -78,18 +83,30 @@ def registerEvent(predicate,handle):
     events[predicate]=handle
 
 
+def is_up_button_pressed():
+    return ui.is_pressed(UP_BUTTON)
 
-class Polling(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
+def is_down_button_pressed():
+    return ui.is_pressed(DOWN_BUTTON)
+
+def is_left_button_pressed():
+    return ui.is_pressed(LEFT_BUTTON)
+
+def is_right_button_pressed():    
+    return ui.is_pressed(RIGHT_BUTTON)
+
+def is_enter_button_pressed():
+    return ui.is_pressed(ENTER_BUTTON)
         
  
-    def run(self):
-        while True:
-            for predicate,handle in events.iteritems():
-                if predicate():
-                    handle()
-            time.sleep(0)
+def run():
+    while True:
+        if ui.is_pressed(BACK_BUTTON):
+            break
+        for predicate,handle in events.iteritems():
+            if predicate():
+                handle()
+        time.sleep(0)
 
 
 

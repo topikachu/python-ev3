@@ -1,13 +1,13 @@
 from __future__ import print_function
 import unittest
 
-from ev3 import ev3
+from ev3 import robot
 from test import test_util
 def setUpModule():
-    ev3.open_all_device()
+    robot.open_all_devices()
     
 def tearDownModule():
-    ev3.close_all_device()
+    robot.close_all_devices()
 class TestEv3Sensors(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -20,7 +20,7 @@ class TestEv3Sensors(unittest.TestCase):
     def test_ev3_color_sensor(self):
         from ev3.lego import EV3ColorSensor
 
-        colorSensor = EV3ColorSensor(ev3.SENSOR_3)
+        colorSensor = EV3ColorSensor(robot.SENSOR_3)
         print( "start reflect mode")
         colorSensor.set_reflect_mode()
         test_util.count_down(10, lambda:print( colorSensor.get_value()))
@@ -38,7 +38,7 @@ class TestEv3Sensors(unittest.TestCase):
     
     def test_ev3_ir_sensor(self):
         from ev3.lego import EV3IRSensor
-        irSensor=EV3IRSensor(ev3.SENSOR_4)
+        irSensor=EV3IRSensor(robot.SENSOR_4)
         print("IR prox mode")
         irSensor.set_prox_mode()
         test_util.count_down(10, lambda:print(irSensor.get_distance()))
@@ -52,7 +52,7 @@ class TestEv3Sensors(unittest.TestCase):
     
     def test_ev3_touch_sensor(self):
         from ev3.lego import EV3TouchSensor
-        touchSensor = EV3TouchSensor(ev3.SENSOR_2)
+        touchSensor = EV3TouchSensor(robot.SENSOR_2)
         test_util.count_down(10, lambda:print(touchSensor.is_pressed()))
     
     @classmethod
