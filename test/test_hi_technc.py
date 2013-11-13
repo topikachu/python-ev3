@@ -23,5 +23,13 @@ class TestHiTechncSensors(unittest.TestCase):
         print( "start compass test")
         test_util.count_down(10, lambda:print( compass.get_angle() ))
 
+    def test_hi_technc_pir_sensor(self):
+        from ev3.hi_technc import HiTechncPIRSensor
+
+        pir_sensor = HiTechncPIRSensor(robot.SENSOR_3, 0x02)
+        print( "start PIR sensor test")
+        pir_sensor.set_deadband(10)
+        test_util.count_down(10, lambda:print( pir_sensor.get_measurement() ))
+
 if __name__ == '__main__':
     unittest.main()
