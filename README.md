@@ -5,7 +5,7 @@ a project to run lego ev3 in python
 ##Things you will need
 * A linux box. Virtual Machine is also OK.
 * The latest lejos bootable sdcard: http://sourceforge.net/p/lejos/wiki/Home/
-* An arm linux versio python. https://www.dropbox.com/s/pk621lqpwi3s9i3/ev3.python.tar.gz
+* An arm linux versio python. https://dl.dropboxusercontent.com/s/pk621lqpwi3s9i3/ev3.python.tar.gz?dl=1
 
 ## Getting Started
 * Burn the lejos sdcard at your linux machine
