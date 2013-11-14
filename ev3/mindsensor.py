@@ -1,5 +1,5 @@
 import sensor
-import functools
+import functools, ctypes
 
 class PSP(sensor.IICSensor):
 
@@ -34,3 +34,21 @@ class PSP(sensor.IICSensor):
         return self.read_single_byte(register)&0xff
     def __getattr__(self, attrName):        
         return functools.partial(self.read_value, attrName[len("get_"):])
+
+class DistNxV3(sensor.IICSensor):
+    def __init__ (self,port,address=0x02):
+        super(DistNxV3, self).__init__(port, address)
+    def get_distance(self):
+        data =  self.read(0x42, 2)
+        distance = ( 0x00FF & data[0] );
+        distance += ( (0x00FF & data[1]) <<8 );
+        return distance
+    def get_voltage(self):
+        data =  self.read(0x44, 2)
+        voltage = ( 0x00FF & data[0] );
+        voltage += ( (0x00FF & data[1]) <<8 );
+        return voltage
+    def energize(self):
+        self.command(0x41, 0x45)
+    def de_energize(self):
+        self.command(0x41, 0x44)
