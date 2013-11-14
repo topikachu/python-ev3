@@ -19,9 +19,9 @@ class TestEv3Sensors(unittest.TestCase):
         print ("In method", self._testMethodName)
         
     def test_mindsensor_psp_sensor(self):
-        from ev3.mindsensor import PSP
+        from ev3.mindsensor import PSPNxV4
 
-        pspSensor = PSP(robot.SENSOR_1)
+        pspSensor = PSPNxV4(robot.SENSOR_1)
         print("press up")
         test_util.count_down(3)
         test_util.wait(5, lambda:print(pspSensor.get_up()))

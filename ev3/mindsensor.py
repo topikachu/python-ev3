@@ -1,7 +1,7 @@
 import sensor
-import functools, ctypes
+import functools
 
-class PSP(sensor.IICSensor):
+class PSPNxV4(sensor.IICSensor):
 
     __command_map={"button_set_1":0x42,
                    "button_set_2":0x43,
@@ -27,10 +27,10 @@ class PSP(sensor.IICSensor):
 
     def __init__ (self,port,address=0x02):
         self.port=port
-        super(PSP, self).__init__(port,address)
-        self.command(0x41, 0x49) #Initialize the Playstation 2 Wireless Receiver dongle (attached to PSP-Nx)
+        super(PSPNxV4, self).__init__(port,address)
+        self.command(0x41, 0x49) #Initialize the Playstation 2 Wireless Receiver dongle (attached to PSPNxV4-Nx)
     def read_value(self,button):
-        register=PSP.__command_map[button]
+        register=PSPNxV4.__command_map[button]
         return self.read_single_byte(register)&0xff
     def __getattr__(self, attrName):        
         return functools.partial(self.read_value, attrName[len("get_"):])
