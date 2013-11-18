@@ -1,0 +1,6 @@
+# Aliases extracted from modules themselves.
+alias sdio:c*v0089d1404* iwmc3200top
+alias serio:ty02pr22id*ex* atkbd
+alias serio:ty06pr*id*ex* atkbd
+alias serio:ty01pr*id*ex* atkbd
+alias serio:ty00pr*id*ex* xtkbd
