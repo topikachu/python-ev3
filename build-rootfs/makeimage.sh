@@ -50,14 +50,12 @@ sudo mount /dev/loop2 /tmp/lms2012_ext
 
 sudo cp $uImage /tmp/lms2012
 sudo cp -R  $rootfs/* /tmp/lms2012_ext
-
+sync
 sudo umount /tmp/lms2012
 sudo umount /tmp/lms2012_ext
 rmdir /tmp/lms2012
 rmdir /tmp/lms2012_ext
 
 sudo losetup -d /dev/loop2
-sleep 2
 sudo losetup -d /dev/loop1
-sleep 2
 sudo losetup -d /dev/loop0
