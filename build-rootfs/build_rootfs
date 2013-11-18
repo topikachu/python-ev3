@@ -296,13 +296,14 @@ filename="${TARGET_ROOTFS_DIR}/etc/issue"
 
         echo -n "    Creating "${filename}" ... "
 
-        echo "             _____     _"                                        > "${filename}"
-        echo "   _____   _|___ /  __| | _____   __"                           >> "${filename}"
-        echo "  / _ \\\\\\ \\\\\\ / / |_ \\\\\\ / _\` |/ _ \\\\\\ \\\\\\ / /" >> "${filename}"
-        echo " |  __/\\\\\\ V / ___) | (_| |  __/\\\\\\ V / "                 >> "${filename}"
-        echo "  \\\\\\___| \\\\\\_/ |____/ \\\\\\__,_|\\\\\\___| \\\\\\_/  "  >> "${filename}"
+        echo "             _   _                            _____ "           > "${filename}"
+        echo " _ __  _   _| |_| |__   ___  _ __   _____   _|___ / "           >> "${filename}"
+        echo "| '_ \| | | | __| '_ \ / _ \| '_ \ / _ \ \ / / |_ \ "           >> "${filename}"
+        echo "| |_) | |_| | |_| | | | (_) | | | |  __/\ V / ___) |"           >> "${filename}"
+        echo "| .__/ \__, |\__|_| |_|\___/|_| |_|\___| \_/ |____/ "           >> "${filename}"
+        echo "|_|    |___/                                        "           >> "${filename}"
         echo ""                                                               >> "${filename}"
-        echo "Debian GNU/Linux 7 on LEGO MINDSTORMS EV3! \\\\n \\\\l"         >> "${filename}"
+        echo "Debian GNU/Linux 6 on LEGO MINDSTORMS EV3! \\\\n \\\\l"         >> "${filename}"
 
         echo    "done"
 exit
