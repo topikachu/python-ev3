@@ -117,9 +117,9 @@ cd ${TARGET_ROOTFS_DIR_PARENT}
        echo -n "    Setting the root password ... "
        chroot ev3-rootfs passwd 
 
-       echo -n "    Adding the python-ev3 user ... "
-       chroot ${TARGET_ROOTFS_DIR} useradd -m -G sudo,plugdev python-ev3
-       chroot ${TARGET_ROOTFS_DIR} usermod -s /bin/bash       python-ev3
+       echo -n "    Adding the ev3 user ... "
+       chroot ${TARGET_ROOTFS_DIR} useradd -m -G sudo,plugdev ev3
+       chroot ${TARGET_ROOTFS_DIR} usermod -s /bin/bash       ev3
 
        # Additional groups we'll add later...
        # ,netdev,audio,video,ssh
@@ -262,23 +262,30 @@ cd ${OLDPWD}
 # Config lms2012
         echo    "-------------------------------------------------------------------------------"
         echo    "Config lms2012..."
-
+        #downgrade udev. we don't need this script anymore in squeeze but let keep them
         #curl http://ftp.us.debian.org/debian/pool/main/u/udev/udev_164-3_armel.deb -o ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/udev_164-3_armel.deb
         #curl http://ftp.us.debian.org/debian/pool/main/u/udev/libudev0_164-3_armel.deb -o ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/libudev0_164-3_armel.deb
         #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} dpkg --force-downgrade -i /tmp/udev_164-3_armel.deb /tmp/libudev0_164-3_armel.deb
         #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} apt-mark hold udev
         #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} apt-mark hold libudev0
 
+        #copy modules
         cp -r lib/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib
-        mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012       
-        cp -r lms2012/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012
+
+        #copy lms2012 modules and other stuffs
+        mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012               
+        cp -r lms2012/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012        
         cp eeprog/eeprog ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/usr/sbin/eeprog
-        cp -r etc/* ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/        
+        cp -r etc/* ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/
+
+        #create ev3 start/stop script        
         touch ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/init.d/.legacy-bootordering
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f  ev3.sh  remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d ev3.sh start 20 2 3 4 5 . stop 9 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f  halt  remove
         mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
+
+        #install python-ev3 library
         cp -r ../ev3 ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
         cp ../setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/python-ev3
