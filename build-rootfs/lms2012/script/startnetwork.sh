@@ -1,5 +1,7 @@
 #! /bin/sh
 
+
+/etc/init.d/isc-dhcp-server restart
 NETADDRESS=10.0.1.1
 
 
@@ -27,4 +29,6 @@ brctl addif br0 usb0
 #${LMS2012_HOME}/sys/wpa_supplicant -B -Dwext -iwlan0 -c/etc/wpa_supplicant.conf
 # get ip address etc.
 #udhcpc -i wlan0
+
+
 

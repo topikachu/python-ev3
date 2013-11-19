@@ -16,7 +16,6 @@ case "$1" in
   start)
     echo "start ev3"
     dpkg --configure -a #continue config which is not sucessfully
-    /etc/init.d/isc-dhcp-server start
     /lib/lms2012/script/ev3init.sh
     /lib/lms2012/script/lms2012.sh
     /lib/lms2012/script/startnetwork.sh

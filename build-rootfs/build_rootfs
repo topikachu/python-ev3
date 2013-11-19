@@ -52,6 +52,7 @@ if [ ! -d ${TARGET_ROOTFS_DIR} ]; then
 
     if [ "${YesNo}" = "Yes" ]; then
 #       multistrap -f multistrap.conf > multistrap.log 2>&1
+
         multistrap -f ${OLDPWD}/multistrap.conf 
 
         echo    "Done"
@@ -124,8 +125,8 @@ cd ${TARGET_ROOTFS_DIR_PARENT}
        # Additional groups we'll add later...
        # ,netdev,audio,video,ssh
 
-       echo -n "    Setting the python-ev3 password ... "
-       chroot ev3-rootfs passwd python-ev3
+       echo -n "    Setting the ev3 password ... "
+       chroot ev3-rootfs passwd ev3
     fi
 
 cd ${OLDPWD}
@@ -180,9 +181,9 @@ filename="${TARGET_ROOTFS_DIR}/etc/resolv.conf"
 
     if [ ! -d "${filename}" ]; then
         echo -n "    Creating "${filename}" ... "
-
-        echo "nameserver 8.8.8.8"  > "${filename}"
-        echo "nameserver 8.8.8.4" >> "${filename}"
+        touch ${filename}    
+#        echo "nameserver 8.8.8.8"  > "${filename}"
+#        echo "nameserver 8.8.8.4" >> "${filename}"
 
         echo    "done"
     fi
@@ -289,7 +290,8 @@ cd ${OLDPWD}
         cp -r ../ev3 ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
         cp ../setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/python-ev3
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install rpyc
+        wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
 
 
 
