@@ -18,8 +18,8 @@ do
 #    echo $LINE
     NAME=$LINE
 done < "/mnt/ramdisk/settings/BrickName"
-hostname $NAME
-bluetoothd -n > /dev/null 2>&1 &
+#hostname $NAME
+#bluetoothd -n > /dev/null 2>&1 &
 
 echo "Initialize Bluetooth..."
 #Read Hw version from eeprom and save it in HwId file
@@ -58,5 +58,5 @@ STRING="${STRING%?}"
 STRING=`echo $STRING | sed "s/\(.*\):\(.*\):\(.*\):\(.*\):\(.*\):\(.*\)/\6:\5:\4:\3:\2:\1/"`
 
 sleep 2
-hciattach /dev/ttyS2 texas 2000000 "flow" "nosleep" $STRING
-sdptool add SP
+#hciattach /dev/ttyS2 texas 2000000 "flow" "nosleep" $STRING
+#sdptool add SP
