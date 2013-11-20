@@ -1,0 +1,26 @@
+auto lo 
+iface lo inet loopback
+
+
+auto usb0
+	iface usb0 inet manual
+
+auto pan1
+	iface pan1 inet manual
+
+auto br0
+iface br0 inet static
+    bridge_ports usb0 pan1
+    address 10.0.1.1        
+    netmask 255.0.0.0
+    bridge_fd 0
+    bridge_stp off
+        
+
+
+
+
+auto wlan0
+iface wlan0 inet dhcp
+
+
