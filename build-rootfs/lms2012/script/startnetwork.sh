@@ -1,7 +1,4 @@
 #! /bin/sh
-
-
-/etc/init.d/isc-dhcp-server restart
 NETADDRESS=10.0.1.1
 
 
@@ -17,11 +14,11 @@ brctl addif br0 usb0
 # start dhcpd
 
 # configure Bluetooth
-#hciconfig hci0 lm MASTER
+hciconfig hci0 lm MASTER
 # make us discoverable
-#hciconfig hci0 piscan
+hciconfig hci0 piscan
 # set default pin
-#agent -a hci0 1234 &
+bluetooth-agent -a hci0 1234 &
 # listen for pan connections
 #pand --listen --role NAP --devup ${LJBIN}/btup --devdown ${LJBIN}/btdown -sdp
 # Now we start wlan
@@ -29,6 +26,6 @@ brctl addif br0 usb0
 #${LMS2012_HOME}/sys/wpa_supplicant -B -Dwext -iwlan0 -c/etc/wpa_supplicant.conf
 # get ip address etc.
 #udhcpc -i wlan0
-
+/etc/init.d/isc-dhcp-server restart
 
 
