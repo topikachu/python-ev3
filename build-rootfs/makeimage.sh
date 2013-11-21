@@ -50,7 +50,7 @@ mkdir -p /tmp/lms2012_ext
 sudo mount /dev/loop1 /tmp/lms2012
 sudo mount /dev/loop2 /tmp/lms2012_ext
 
-sudo cp $uImage /tmp/lms2012
+sudo cp $uImage /tmp/lms2012/uImage
 sudo cp -R  $rootfs/* /tmp/lms2012_ext
 sync
 sudo umount /tmp/lms2012

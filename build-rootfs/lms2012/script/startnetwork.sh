@@ -11,14 +11,15 @@ brctl stp br0 off
 modprobe g_ether
 ifconfig usb0 0.0.0.0
 brctl addif br0 usb0
-
+ifconfig pan0 0.0.0.0
+brctl addif br0 pan0
 
 # configure Bluetooth
 hciconfig hci0 lm MASTER
 # make us discoverable
 hciconfig hci0 piscan
 # set default pin
-bluetooth-agent -a hci0 1234 &
+bluetooth-agent 1234 &
 
 
 /etc/init.d/isc-dhcp-server restart
