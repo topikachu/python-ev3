@@ -45,18 +45,3 @@ fi
 #Save Bluetooth address in file
 echo -e ${STRING//[[:space:]]} > /mnt/ramdisk/settings/BTser
 
-#Remove first 2 spaces
-STRING=${STRING/  /}
-#Replace spaces with :
-STRING=${STRING// /:}
-
-#Remove last character
-STRING="${STRING%?}"
-
-#---------------------------------------------
-#Invert string
-STRING=`echo $STRING | sed "s/\(.*\):\(.*\):\(.*\):\(.*\):\(.*\):\(.*\)/\6:\5:\4:\3:\2:\1/"`
-
-sleep 2
-#hciattach /dev/ttyS2 texas 2000000 "flow" "nosleep" $STRING
-#sdptool add SP

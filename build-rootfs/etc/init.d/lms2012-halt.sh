@@ -15,7 +15,7 @@
 # after the power off flag has been set will power the EV3 off
 echo "remove lms2012 modules"
 # rmmod d_bt
-rmmod d_ui
+modprobe -r d_ui
 # # d_analog removes buffering for linux prompt
 # rmmod d_analog
 # # d_uart must be removed after d_analog
@@ -26,5 +26,5 @@ rmmod d_ui
 # rmmod d_sound
 # rmmod d_iic
 sync
-rmmod d_power
+modprobe -r d_power
 

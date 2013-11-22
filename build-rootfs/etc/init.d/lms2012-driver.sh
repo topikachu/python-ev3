@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides: ev3-lms2012
+# Provides: lms2012-driver
 # Required-Start: $ev3-init
 # Required-Stop: 
 # Should-Start: 
@@ -18,9 +18,9 @@ echo $var > ${LMS2012_SETTINGS}/UsbInfo.dat
 
 # insmod ${LMS2012_MODULES}/d_iic.ko `cat ${LMS2012_SETTINGS}/HwId`
 # insmod ${LMS2012_MODULES}/d_uart.ko `cat ${LMS2012_SETTINGS}/HwId`
-insmod ${LMS2012_MODULES}/d_power.ko `cat ${LMS2012_SETTINGS}/HwId`
+modprobe d_power `cat ${LMS2012_SETTINGS}/HwId`
 # insmod ${LMS2012_MODULES}/d_pwm.ko `cat ${LMS2012_SETTINGS}/HwId`
-insmod ${LMS2012_MODULES}/d_ui.ko `cat ${LMS2012_SETTINGS}/HwId`
+modprobe d_ui `cat ${LMS2012_SETTINGS}/HwId`
 # insmod ${LMS2012_MODULES}/d_analog.ko `cat ${LMS2012_SETTINGS}/HwId`
 
 # insmod ${LMS2012_MODULES}/d_usbhost.ko

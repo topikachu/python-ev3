@@ -272,17 +272,28 @@ cd ${OLDPWD}
 
         #copy modules
         cp -r lib/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib
-
-        #copy lms2012 modules and other stuffs
-        mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012               
-        cp -r lms2012/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib/lms2012        
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} depmod -a  2.6.33-rc4
+        #copy other stuffs      
         cp eeprog/eeprog ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/usr/sbin/eeprog
         cp -r etc/* ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/
 
+
         #create ev3 start/stop script        
         touch ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/init.d/.legacy-bootordering
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f  ev3.sh  remove
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d ev3.sh start 20 2 3 4 5 . stop 9 0 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-hwinfo.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-runonce.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-network.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-bluetooth.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-driver.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-powerflag.py remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-halt.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-hwinfo.sh start 5 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-runonce.sh start 6 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-network.sh start 10 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.sh start 20 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-driver.sh start 20 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-powerflag.py stop 1 0 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-halt.sh stop 9 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f  halt  remove
         mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
 
@@ -306,13 +317,7 @@ filename="${TARGET_ROOTFS_DIR}/etc/issue"
 
         echo -n "    Creating "${filename}" ... "
 
-        echo "             _   _                            _____ "           > "${filename}"
-        echo " _ __  _   _| |_| |__   ___  _ __   _____   _|___ / "           >> "${filename}"
-        echo "| '_ \| | | | __| '_ \ / _ \| '_ \ / _ \ \ / / |_ \ "           >> "${filename}"
-        echo "| |_) | |_| | |_| | | | (_) | | | |  __/\ V / ___) |"           >> "${filename}"
-        echo "| .__/ \__, |\__|_| |_|\___/|_| |_|\___| \_/ |____/ "           >> "${filename}"
-        echo "|_|    |___/                                        "           >> "${filename}"
-        echo ""                                                               >> "${filename}"
+        echo "python-ev3"           > "${filename}"       
         echo "Debian GNU/Linux 6 on LEGO MINDSTORMS EV3! \\\\n \\\\l"         >> "${filename}"
 
         echo    "done"
