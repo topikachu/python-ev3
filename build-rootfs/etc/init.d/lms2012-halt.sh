@@ -17,14 +17,14 @@ echo "remove lms2012 modules"
 # rmmod d_bt
 modprobe -r d_ui
 # # d_analog removes buffering for linux prompt
-# rmmod d_analog
+modprobe -r d_analog
 # # d_uart must be removed after d_analog
-# rmmod d_uart
-# rmmod d_pwm
+modprobe -r d_uart
+modprobe -r d_pwm
 # #rmmod d_usbdev
 # rmmod d_usbhost
-# rmmod d_sound
-# rmmod d_iic
+modprobe -r d_sound
+modprobe -r d_iic
 sync
 modprobe -r d_power
 
