@@ -13,6 +13,7 @@
 ### END INIT INFO
 
 dpkg --configure -a #continue config which is not sucessfully on pc
+locale-gen
 if [ -e /etc/init.d/lms2012-runonce.sh ]; then
             update-rc.d -f lms2012-runonce.sh remove
 fi

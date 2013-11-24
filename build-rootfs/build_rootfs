@@ -137,14 +137,14 @@ cd ${OLDPWD}
 
 cd ${TARGET_ROOTFS_DIR_PARENT}
 
-#    echo    "-------------------------------------------------------------------------------"
-#    echo    " Purging unneeded files from the apt-cache..."
+    echo    "-------------------------------------------------------------------------------"
+    echo    " Purging unneeded files from the apt-cache..."
 
-#    chroot ev3-rootfs apt-get purge
-#    chroot ev3-rootfs apt-get clean
+    chroot ev3-rootfs apt-get purge
+    chroot ev3-rootfs apt-get clean
 
-#    chroot ev3-rootfs rm -r    /var/lib/apt/lists
-#    chroot ev3-rootfs mkdir -p /var/lib/apt/lists/partial
+    chroot ev3-rootfs rm -r    /var/lib/apt/lists
+    chroot ev3-rootfs mkdir -p /var/lib/apt/lists/partial
 
     echo    " done"
 
@@ -304,6 +304,8 @@ cd ${OLDPWD}
         wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
 
+        rm  -r ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/*
+
 
 
 
@@ -318,7 +320,7 @@ filename="${TARGET_ROOTFS_DIR}/etc/issue"
         echo -n "    Creating "${filename}" ... "
 
         echo "python-ev3"           > "${filename}"       
-        echo "Debian GNU/Linux 6 on LEGO MINDSTORMS EV3! \\\\n \\\\l"         >> "${filename}"
+        echo "Debian GNU/Linux 7 on LEGO MINDSTORMS EV3! \\\\n \\\\l"         >> "${filename}"
 
         echo    "done"
 exit
