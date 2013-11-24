@@ -283,14 +283,14 @@ cd ${OLDPWD}
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-hwinfo.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-runonce.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-network.sh remove
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-bluetooth.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-bluetooth.py remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-driver.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-powerflag.py remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-halt.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-hwinfo.sh start 5 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-runonce.sh start 6 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-network.sh start 10 2 3 4 5 .
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.sh start 20 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.py start 20 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-driver.sh start 20 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-powerflag.py stop 1 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-halt.sh stop 9 0 .

@@ -11,8 +11,7 @@ brctl stp br0 off
 modprobe g_ether
 ifconfig usb0 0.0.0.0
 brctl addif br0 usb0
-ifconfig pan0 0.0.0.0
-brctl addif br0 pan0
+
 
 
 

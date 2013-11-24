@@ -21,7 +21,7 @@ sudo apt-get install pv
 rootfs=$2
 image=$3
 rm -f $image
-pv -tpreb /dev/zero | dd of=$image bs=1024 count=524288
+pv -tpreb /dev/zero | dd of=$image bs=1024 count=1048576
 sudo losetup /dev/loop0 $image
 echo "n
 p
