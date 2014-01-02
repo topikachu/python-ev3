@@ -36,7 +36,7 @@ class EV3ColorSensor(sensor.UartSensor):
         self.set_mode(5)
 
     def color_to_string(self):
-        return ["NONE", "BALCK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN"][self.get_value()]
+        return ["NONE", "BLACK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN"][self.get_value()]
 
 
 class EV3IRSensor(sensor.UartSensor):
