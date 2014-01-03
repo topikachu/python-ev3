@@ -1,2 +1,1 @@
-__all__ = ["lego"]
-import lego
+__all__ = ['error', 'ev3']
