@@ -15,13 +15,11 @@ Project to program Lego Mindstorms EV3 using Python.
 
 Tested on OSX 10.9, should work with previous versions as well.
 
-1. Download system image from [Source Forge](http://sourceforge.net/projects/python-ev3/files/python-ev3.img.tar.gz/download) and unzip it:
+1. Download [system image](https://db.tt/2GWdbLxK) and unzip it:
 
     _Note: This is prebuilt system image. If you want to build it yourself follow [build instructions](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs)._
     
-    **Important: following system image is not up-to-date and python code below will not work! - to be updated soon. **
-
-        $ curl -L http://sourceforge.net/projects/python-ev3/files/python-ev3.img.tar.gz/download | tar xv
+        $  curl -L https://db.tt/2GWdbLxK | tar xj
 
 2. Copy downloaded image to sd card. First, get the device `<NUMBER>` by inspecting output from:
 
