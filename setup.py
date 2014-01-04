@@ -8,5 +8,5 @@ setup(name='python-ev3',
       author='Gong Yi',
       author_email='topikachu@163.com',
       url='https://github.com/topikachu/python-ev3',
-      packages=['ev3', 'ev3.rawdevice'],
-     )
+      packages=['ev3', 'ev3.rawdevice', 'ev3.motor', 'ev3.sensor']
+      )
