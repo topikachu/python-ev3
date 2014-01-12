@@ -39,3 +39,5 @@ nosetests.xml
 
 python-ev3.sublime-project
 python-ev3.sublime-workspace
+
+ev3
