@@ -298,8 +298,8 @@ cd ${OLDPWD}
         mkdir ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
 
         #install python-ev3 library
-        cp -r ../ev3 ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
-        cp ../setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
+        cp -r ../ev3/ev3 ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
+        cp ../ev3/setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/python-ev3
         wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
