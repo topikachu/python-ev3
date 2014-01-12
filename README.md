@@ -3,15 +3,22 @@ python-ev3
 
 Project to program Lego Mindstorms EV3 using Python.
 
-## What you need
+## What's this repository for?
+
+Use this repository to create bootable system for Lego Mindstorms EV3 brick. If don't want to go through the whole [process](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs) yourself, you can download prebuild system image from [here](https://db.tt/2GWdbLxK). 
+
+Probably, you'll be more instested in the [ev3 repository](https://github.com/hmml/ev3) which is the Python API to program EV3 brick. 
+
+## What you need:
+
  1. [LegoMindstorms EV3 (31313)](http://www.lego.com/en-us/mindstorms/products/ev3/31313).
  2. Micro SD card 1GB+ ([original instruction]((https://github.com/topikachu/python-ev3)) claims that 2GB is required, I've used 1GB and it works as well).
  3. SD -> Micro SD card adapter.
  4. [Small forceps](http://upload.wikimedia.org/wikipedia/commons/a/a4/Forceps.jpg) to remove Micro SD card from EV3 block.
- 5. 6x AA rechargeable batteries.
+ 5. 6x AA rechargeable batteries, two sets - the go flat pretty quickly.
  6. 2x AAA rechargeable batteries.
 
-## Setup (OSX)
+## Prepare SD card with system
 
 Tested on OSX 10.9, should work with previous versions as well.
 
