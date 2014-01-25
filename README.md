@@ -26,7 +26,7 @@ Tested on OSX 10.9, should work with previous versions as well.
 
     _Note: This is prebuilt system image. If you want to build it yourself follow [build instructions](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs)._
     
-        $  curl -L https://db.tt/2GWdbLxK | tar xj
+        $  curl -L https://db.tt/f7eBqYNo | tar xj
 
 2. Copy downloaded image to sd card. First, get the device `<NUMBER>` by inspecting output from:
 
