@@ -1,13 +1,13 @@
 python-ev3
 ==========
 
-Project to program Lego Mindstorms EV3 using Python.
+Custom Debian distribution to program Lego Mindstorms EV3 using Python.
 
 ## What's this repository for?
 
-Use this repository to create bootable system for Lego Mindstorms EV3 brick. If don't want to go through the whole [process](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs) yourself, you can download prebuild system image from [here](https://db.tt/2GWdbLxK). 
+Use this repository to create bootable system for Lego Mindstorms EV3 brick. If don't want to go through the whole [process](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs) yourself, you can download prebuild system image from [here](https://db.tt/f7eBqYNo).
 
-Probably, you'll be more instested in the [ev3 repository](https://github.com/hmml/ev3) which is the Python API to program EV3 brick. 
+Once you have the system, you'll be more interested in the [ev3 repository](https://github.com/hmml/ev3) which is the Python API to program EV3 brick.
 
 ## What you need:
 
@@ -22,7 +22,7 @@ Probably, you'll be more instested in the [ev3 repository](https://github.com/hm
 
 Tested on OSX 10.9, should work with previous versions as well.
 
-1. Download [system image](https://db.tt/2GWdbLxK) and unzip it:
+1. Download [system image](https://db.tt/f7eBqYNo) and unzip it:
 
     _Note: This is prebuilt system image. If you want to build it yourself follow [build instructions](https://github.com/hmml/python-ev3/tree/refactor/build-rootfs)._
     
