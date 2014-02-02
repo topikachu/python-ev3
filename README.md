@@ -11,7 +11,7 @@ a project to run lego ev3 in python
 * Downlaod from http://sourceforge.net/projects/python-ev3/files/python-ev3.img.tar.gz/download and extract the image (it's 1G file after uncompressed)
 * Copy the whole image to the SD card  
 `umount /dev/<all sdcard patitons>`  
-`dd if=python-ev3.img of=/dev/<sdcard device> bs=2m`
+`dd if=python-ev3.img of=/dev/<sdcard device> bs=2M`
 * Insert the sd card into ev3
 * Boot the ev3
 * Connect ev3 with the usb cable.  
