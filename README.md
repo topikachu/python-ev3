@@ -9,6 +9,8 @@ Use this repository to create bootable system for Lego Mindstorms EV3 brick. If 
 
 Once you have the system, you'll be more interested in the [ev3 repository](https://github.com/hmml/ev3) which is the Python API to program EV3 brick.
 
+-_Notice, the python module is moved to [hmml repository](https://github.com/hmml/ev3). This one is only used for script to build SD image._
+
 ## What you need:
 
  1. [LegoMindstorms EV3 (31313)](http://www.lego.com/en-us/mindstorms/products/ev3/31313).
