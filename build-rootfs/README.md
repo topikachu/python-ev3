@@ -1,16 +1,24 @@
-build the python-ev3 fs
-==========
-The python-ev3 root fs is built from debian wheezy by Multistrap
+Build the python-ev3 fs
+=======================
+The python-ev3 root fs is built from Debian Wheezy by Multistrap. It's a complete bootable system.
 
-##Things you will need
-* A debain or ubuntu linux box. Virtual Machine is also OK.
+## Things you will need
+Debian or Ubuntu Linux box. Virtual machine is also OK (I've used VirtualBox on Windows 7 running Ubuntu 12.04 LTS).
 
 ## Getting Started
-* First time, run the ./prepare_env to install all tool
-* Run sudo ./build_rootfs to download and setup the rootfs
-* Run ./makeimage.sh <uImage> <rootfs dir> <image name>  
-`./makeimage.sh uImage/uImage  ../../python-ev3-rootfs/ev3-rootfs/ ../../python-ev3-rootfs/python-ev3.img`
-* After the image is created, use dd to copy the image to sd card  
+* Install all tools and clone/update ev3 python repository:
+
+		$ ./prepare_env
+
+* Download and setup rootfs:
+
+		$ sudo ./build_rootfs
+
+* Create image file:
+
+		$ ./makeimage.sh uImage/uImage  ../../python-ev3-rootfs/ev3-rootfs/ ../../python-ev3-rootfs/python-ev3.img
+
+* After the image is created, use `dd` to copy the image to sd card - that's all!
 
 ## Reference
 * ev3 opensource project: https://github.com/mindboards/ev3sources
