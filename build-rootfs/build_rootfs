@@ -203,6 +203,8 @@ filename="${TARGET_ROOTFS_DIR}/etc/network/interfaces"
         echo ""                                  >> $filename
         echo "auto wlan0"                        >> $filename
         echo "iface wlan0 inet dhcp"             >> $filename
+        echo "    wpa-ssid myssid"               >> $filename
+        echo "    wpa-psk mysecretpassphrase"    >> $filename
 
         echo    "done"
     fi
@@ -236,24 +238,6 @@ mkdir ${TARGET_ROOTFS_DIR}/mnt/tmpdisk
 mkdir ${TARGET_ROOTFS_DIR}/mnt/ramdisk
 mkdir ${TARGET_ROOTFS_DIR}/var/volatile
 
-#Set up wpa_supplicant.conf - add your own keys here!!!
-filename="${TARGET_ROOTFS_DIR}/etc/wpa_supplicant.conf"
-
-        echo -n "    Updating "${filename}" ... "
-
-        echo "ctrl_interface=/var/run/wpa_supplicant"   > ${filename}
-        echo "#ap_scan=2"                              >> ${filename}
-        echo ""                                        >> ${filename}
-        echo "network={"                               >> ${filename}
-        echo "       ssid=\"Your SSID Here\""          >> ${filename}
-        echo "       scan_ssid=1"                      >> ${filename}
-        echo "       proto=WPA RSN"                    >> ${filename}
-        echo "       key_mgmt=WPA-PSK"                 >> ${filename}
-        echo "       pairwise=CCMP TKIP"               >> ${filename}
-        echo "       group=CCMP TKIP"                  >> ${filename}
-        echo "       psk=\"Your text key here\""       >> ${filename}
-        echo "}"                                       >> ${filename}
-
         echo    "done"
 
 cd ${OLDPWD}
@@ -277,7 +261,7 @@ cd ${OLDPWD}
         cp eeprog/eeprog ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/usr/sbin/eeprog
         cp -r etc/* ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/
 
-
+        
         #create ev3 start/stop script        
         touch ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/init.d/.legacy-bootordering
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-hwinfo.sh remove
@@ -290,7 +274,7 @@ cd ${OLDPWD}
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-hwinfo.sh start 5 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-runonce.sh start 6 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-network.sh start 10 2 3 4 5 .
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.py start 20 2 3 4 5 .
+        #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.py start 20 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-driver.sh start 20 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-powerflag.py stop 1 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-halt.sh stop 9 0 .
@@ -301,12 +285,16 @@ cd ${OLDPWD}
         cp -r ../ev3/ev3 ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3
         cp ../ev3/setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/python-ev3
-        wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
-        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install rpyc
+        #wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
+        #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
 
         rm  -r ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/*
-
-
+        echo "en_US.UTF-8 UTF-8" >>${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/locale.gen
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} locale-gen
+        cd ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/dev
+        MAKEDEV consoleonly
+        cd ${OLDPWD}
 
 
 

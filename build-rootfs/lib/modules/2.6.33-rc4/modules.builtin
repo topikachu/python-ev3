@@ -95,6 +95,10 @@ kernel/drivers/video/syscopyarea.ko
 kernel/drivers/video/sysimgblt.ko
 kernel/drivers/video/fb_sys_fops.ko
 kernel/drivers/video/st7586fb.ko
+kernel/drivers/video/console/fbcon.ko
+kernel/drivers/video/console/bitblit.ko
+kernel/drivers/video/console/font.ko
+kernel/drivers/video/console/softcursor.ko
 kernel/drivers/watchdog/davinci_wdt.ko
 kernel/net/802/p8022.ko
 kernel/net/802/psnap.ko
@@ -116,7 +120,6 @@ kernel/net/sunrpc/sunrpc.ko
 kernel/net/sunrpc/auth_gss/auth_rpcgss.ko
 kernel/net/sunrpc/auth_gss/rpcsec_gss_krb5.ko
 kernel/net/unix/unix.ko
-kernel/net/wireless/lib80211.ko
 kernel/lib/bitrev.ko
 kernel/lib/crc-ccitt.ko
 kernel/lib/crc16.ko

@@ -12,6 +12,7 @@ kernel/drivers/usb/gadget/g_hid.ko
 kernel/drivers/input/keyboard/atkbd.ko
 kernel/drivers/input/keyboard/xtkbd.ko
 kernel/drivers/ssb/ssb.ko
+kernel/net/wireless/lib80211.ko
 kernel/net/wireless/lib80211_crypt_wep.ko
 kernel/net/wireless/lib80211_crypt_ccmp.ko
 kernel/net/wireless/lib80211_crypt_tkip.ko
