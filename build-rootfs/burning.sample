@@ -1,0 +1,3 @@
+sudo umount /dev/sdb1
+sudo umount /dev/sdb2
+pv -tpreb /home/ubuntu/python-ev3.img |sudo dd of=/dev/sdb bs=2M

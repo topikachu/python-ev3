@@ -209,7 +209,7 @@ filename="${TARGET_ROOTFS_DIR}/etc/network/interfaces"
         echo    "done"
     fi
 
-#Set a terminal to the debug port
+#Set a terminal to the debug port and auto login at tty1
 filename="${TARGET_ROOTFS_DIR}/etc/inittab"
 
         echo -n "    Updating "${filename}" ... "
@@ -219,7 +219,7 @@ filename="${TARGET_ROOTFS_DIR}/etc/inittab"
                      "${filename}"
 
         echo "T0:2345:respawn:/sbin/getty -L ttyS1 115200 vt100" >> "${filename}"
-
+        sed -i '/1:2345:respawn/c\1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>&1' "${filename}"
         echo    "done"
 
 #Set how to mount the microSD partitions
@@ -255,12 +255,12 @@ cd ${OLDPWD}
         #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} apt-mark hold libudev0
 
         #copy modules
-        cp -r lib/*  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib
+        cp -r lib/.  ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/lib
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} depmod -a  2.6.33-rc4
         #copy other stuffs      
         cp eeprog/eeprog ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/usr/sbin/eeprog
-        cp -r etc/* ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/
-
+        cp -r etc/. ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/
+        cp -r root/. ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/root/
         
         #create ev3 start/stop script        
         touch ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/init.d/.legacy-bootordering
@@ -269,6 +269,7 @@ cd ${OLDPWD}
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-network.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-bluetooth.py remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-driver.sh remove
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-tty1.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-powerflag.py remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f lms2012-halt.sh remove
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-hwinfo.sh start 5 2 3 4 5 .
@@ -276,6 +277,7 @@ cd ${OLDPWD}
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-network.sh start 10 2 3 4 5 .
         #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-bluetooth.py start 20 2 3 4 5 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-driver.sh start 20 2 3 4 5 .
+        chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-tty1.sh start 25 2 3 4 5 .        
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-powerflag.py stop 1 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d lms2012-halt.sh stop 9 0 .
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} update-rc.d -f  halt  remove
@@ -286,8 +288,7 @@ cd ${OLDPWD}
         cp ../ev3/setup.py ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/python-ev3       
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/python-ev3
         chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install rpyc
-        #wget https://pypi.python.org/packages/source/r/rpyc/rpyc-3.2.3.tar.gz -O ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/rpyc-3.2.3.tar.gz
-        #chroot ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR} pip install /tmp/rpyc-3.2.3.tar.gz
+        
 
         rm  -r ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/tmp/*
         echo "en_US.UTF-8 UTF-8" >>${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/etc/locale.gen
@@ -295,6 +296,7 @@ cd ${OLDPWD}
         cd ${TARGET_ROOTFS_DIR_PARENT}/${TARGET_ROOTFS_DIR}/dev
         MAKEDEV consoleonly
         cd ${OLDPWD}
+
 
 
 
