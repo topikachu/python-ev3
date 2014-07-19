@@ -79,6 +79,20 @@ def create_ev3_property(name, readonly=False, property_type=Ev3StringType):
     return property(fget, fset if not readonly else None)
 
 
+class Ev3Meta(type):
+
+    def __new__(cls, name, bases, attr):
+        const_list = attr.get("const_list")
+        if (const_list != None):
+            for c in const_list:
+                attr[c] = c
+        property_list = attr.get("property_list")
+        if (property_list != None):
+            for p in property_list:
+                attr[p['name']] = create_ev3_property(**p)
+        return type.__new__(cls, name, bases, attr)
+
+
 class Ev3Dev(object):
 
     def __init__(self):
@@ -104,21 +118,23 @@ class Ev3Dev(object):
         self._sys_path = path
 
     def write_value(self, name, value):
-        attr_file = os.path.join(self.sys_path, name)       
+        attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
             f = open(attr_file, 'w')
             f.write(str(value))
+            print name, value
             f.close()
         else:
             return
 
 
 class Msensor(Ev3Dev):
+    __metaclass__ = Ev3Meta
     property_list = [
         {'name': 'bin_data', 'readonly': True},
         {'name': 'bin_data_format', 'readonly': True},
         {'name': 'dp', 'readonly': True},
-        {'name': 'mode', 'readonly': False},
+        #{'name': 'mode', 'readonly': False},
         {'name': 'modes', 'readonly': True},
         {'name': 'port_name', 'readonly': True},
         {'name': 'type_id', 'readonly': True, 'property_type': Ev3IntType},
@@ -162,25 +178,23 @@ class Msensor(Ev3Dev):
             raise NoSuchSensorError(port, type_id)
         self._mode = ''
 
-    # @property
-    # def mode(self):
-    #     return self._mode
+    @property
+    def mode(self):
+        return self._mode
 
-    # @mode.setter
-    # def mode(self, value):
-    #     if (self._mode != value):
-    #         self._mode = value
-    #         self.write_value('mode', value)
+    @mode.setter
+    def mode(self, value):
+        if (self._mode != value):
+            self._mode = value
+            self.write_value('mode', value)
 
     def mode_force_flush(self, value):
         self._mode = value
         self.write_value('mode', value)
 
-for p in Msensor.property_list:
-    setattr(Msensor, p['name'],  create_ev3_property(**p))
-
 
 class Motor(Ev3Dev):
+    __metaclass__ = Ev3Meta
     property_list = [
         {'name': 'duty_cycle', 'readonly': True, 'property_type': Ev3IntType},
         {'name': 'duty_cycle_sp', 'readonly':
@@ -201,7 +215,7 @@ class Motor(Ev3Dev):
         {'name': 'ramp_up_sp', 'readonly': False, 'property_type': Ev3IntType},
         {'name': 'regulation_mode', 'readonly':
             False, 'property_type': Ev3OnOffType},
-        {'name': 'reset', 'readonly': False},
+        #{'name': 'reset', 'readonly': False},
         {'name': 'run', 'readonly': False, 'property_type': Ev3BoolType},
         {'name': 'run_mode', 'readonly': False},
         {'name': 'speed_regulation_D', 'readonly':
@@ -219,6 +233,9 @@ class Motor(Ev3Dev):
         {'name': 'type', 'readonly': False},
         {'name': 'uevent', 'readonly': True}
     ]
+
+    const_list = ['coast', 'brake', 'hold', 'relative', 'absolute', 'A', 'B', 'C', 'D'
+                  ]
 
     def __init__(self, port='', _type=''):
         Ev3Dev.__init__(self)
@@ -246,12 +263,49 @@ class Motor(Ev3Dev):
         if (not motor_existing):
             raise NoSuchMotorError(port, _type)
 
-
     def stop(self):
         self.run = False
 
     def start(self):
         self.run = True
 
-for p in Motor.property_list:
-    setattr(Motor, p['name'],  create_ev3_property(**p))
+    def reset(self):
+        self.write_value('reset', 1)
+
+    def run_forever(self, speed_sp, **kwargs):
+        self.run_mode = 'forever'
+        for k in kwargs:
+            v = kwargs[k]
+            if (v != None):
+                setattr(self, k, v)
+        regulation_mode = self.regulation_mode
+        if (regulation_mode):
+            self.pulses_per_second_sp = speed_sp
+        else:
+            self.duty_cycle_sp = speed_sp
+        self.start()
+
+    def run_time_limited(self, time_sp, speed_sp,  **kwargs):
+        self.run_mode = 'time'
+        for k in kwargs:
+            v = kwargs[k]
+            if (v != None):
+                setattr(self, k, v)
+        regulation_mode = self.regulation_mode
+        if (regulation_mode):
+            self.pulses_per_second_sp = speed_sp
+        else:
+            self.duty_cycle_sp = speed_sp
+        self.time_sp = time_sp
+        self.start()
+
+    def run_position_limited(self, position_sp, speed_sp,  **kwargs):
+        self.run_mode = 'position'
+        kwargs['regulation_mode']=True
+        for k in kwargs:
+            v = kwargs[k]
+            if (v != None):
+                setattr(self, k, v)
+        self.pulses_per_second_sp = speed_sp
+        self.position_sp = position_sp
+        self.start()

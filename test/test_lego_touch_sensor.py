@@ -3,10 +3,11 @@ import unittest
 
 
 class TestTouchSensor(unittest.TestCase):
-    d = TouchSensor()
-    raw_input('test pushed')
-    print(d.is_pushed)
-    print(d.mode)
+    def test_touch_sensor(self):
+        d = TouchSensor()
+        raw_input('test pushed')
+        print(d.is_pushed)
+        print(d.mode)
 
 
 if __name__ == '__main__':

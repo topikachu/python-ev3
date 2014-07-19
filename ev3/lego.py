@@ -9,7 +9,7 @@ class TouchSensor(Msensor):
     @property
     def is_pushed(self):
         self.mode = 'TOUCH'
-        return self.value0_as_bool
+        return bool(self.value0)
 
 
 class ColorSensor(Msensor):
@@ -113,7 +113,7 @@ class UltrasonicSensor(Msensor):
     @property
     def listen(self):
         self.mode = 'US-LISTEN'
-        return self.value0_as_bool
+        return bool(self.value0)
 
     @property
     def si_cm(self):
