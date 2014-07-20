@@ -10,4 +10,5 @@ setup(name='python-ev3',
       author_email='topikachu@163.com',
       url='https://github.com/topikachu/python-ev3',
       packages=['ev3'],
+      download_url="https://github.com/topikachu/python-ev3/releases/download/0.01/python_ev3-0.0.1-py2.7.egg"
      )
