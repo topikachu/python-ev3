@@ -4,12 +4,12 @@ import glob
 
 class NoSuchSensorError(Exception):
 
-    def __init__(self, port, type_id):
+    def __init__(self, port, type_id=None):
         self.port = port
         self.type_id = type_id
 
     def __str__(self):
-        return "No such sensor port=%d type_id=%d" % (self.port, self.type_id)
+        return "No such sensor port=%d type_id=%s" % (self.port, repr(self.type_id))
 
 
 class NoSuchMotorError(Exception):
@@ -69,35 +69,33 @@ class Ev3OnOffType(object):
             return 'on' if bool(value) else 'off'
 
 
-def create_ev3_property(name, readonly=False, property_type=Ev3StringType):
-    def fget(self):
-        return property_type.post_read(self.read_value(name))
+def ev3_meta(property_list=None, const_list=None):
+    class Ev3Meta(type):
 
-    def fset(self, value):
-        self.write_value(name, property_type.pre_write(value))
+        def __new__(cls, name, bases, attr):
+            if (const_list != None):
+                for c in const_list:
+                    attr[c] = c
 
-    return property(fget, fset if not readonly else None)
+            if (property_list != None):
+                for p in property_list:
+                    def create_ev3_property(name, read_only=False, property_type=Ev3StringType):
+                        def fget(self):
+                            return property_type.post_read(self.read_value(name))
 
-
-class Ev3Meta(type):
-
-    def __new__(cls, name, bases, attr):
-        const_list = attr.get("const_list")
-        if (const_list != None):
-            for c in const_list:
-                attr[c] = c
-        property_list = attr.get("property_list")
-        if (property_list != None):
-            for p in property_list:
-                attr[p['name']] = create_ev3_property(**p)
-        return type.__new__(cls, name, bases, attr)
+                        def fset(self, value):
+                            self.write_value(
+                                name, property_type.pre_write(value))
+                        return property(fget, fset if not read_only else None)
+                    attr[p['name']] = create_ev3_property(**p)
+            return type.__new__(cls, name, bases, attr)
+    return Ev3Meta
 
 
 class Ev3Dev(object):
 
     def __init__(self):
-        self._sys_path = ""
-        pass
+        self.sys_path = ""
 
     def read_value(self, name):
         attr_file = os.path.join(self.sys_path, name)
@@ -108,14 +106,6 @@ class Ev3Dev(object):
             return value
         else:
             return None
-
-    @property
-    def sys_path(self):
-        return self._sys_path
-
-    @sys_path.setter
-    def sys_path(self, path):
-        self._sys_path = path
 
     def write_value(self, name, value):
         attr_file = os.path.join(self.sys_path, name)
@@ -129,26 +119,25 @@ class Ev3Dev(object):
 
 
 class Msensor(Ev3Dev):
-    __metaclass__ = Ev3Meta
-    property_list = [
-        {'name': 'bin_data', 'readonly': True},
-        {'name': 'bin_data_format', 'readonly': True},
-        {'name': 'dp', 'readonly': True},
-        #{'name': 'mode', 'readonly': False},
-        {'name': 'modes', 'readonly': True},
-        {'name': 'port_name', 'readonly': True},
-        {'name': 'type_id', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'uevent', 'readonly': True},
-        {'name': 'units', 'readonly': True},
-        {'name': 'value0', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value1', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value2', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value3', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value4', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value5', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value6', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'value7', 'readonly': True, 'property_type': Ev3IntType}
-    ]
+    __metaclass__ = ev3_meta(property_list=[
+        {'name': 'bin_data', 'read_only': True},
+        {'name': 'bin_data_format', 'read_only': True},
+        {'name': 'dp', 'read_only': True},
+        #{'name': 'mode', 'read_only': False},
+        {'name': 'modes', 'read_only': True},
+        {'name': 'port_name', 'read_only': True},
+        {'name': 'type_id', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'uevent', 'read_only': True},
+        {'name': 'units', 'read_only': True},
+        {'name': 'value0', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value1', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value2', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value3', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value4', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value5', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value6', 'read_only': True, 'property_type': Ev3IntType},
+        {'name': 'value7', 'read_only': True, 'property_type': Ev3IntType}
+    ])
 
     def __init__(self, port=-1, type_id=-1):
         Ev3Dev.__init__(self)
@@ -194,48 +183,54 @@ class Msensor(Ev3Dev):
 
 
 class Motor(Ev3Dev):
-    __metaclass__ = Ev3Meta
-    property_list = [
-        {'name': 'duty_cycle', 'readonly': True, 'property_type': Ev3IntType},
-        {'name': 'duty_cycle_sp', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'estop', 'readonly': False, 'property_type': Ev3IntType},
-        {'name': 'polarity_mode', 'readonly': False},
-        {'name': 'port_name', 'readonly': True},
-        {'name': 'position', 'readonly': False, 'property_type': Ev3IntType},
-        {'name': 'position_mode', 'readonly': False},
-        {'name': 'position_sp', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'pulses_per_second', 'readonly':
-            True, 'property_type': Ev3IntType},
-        {'name': 'pulses_per_second_sp', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'ramp_down_sp', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'ramp_up_sp', 'readonly': False, 'property_type': Ev3IntType},
-        {'name': 'regulation_mode', 'readonly':
-            False, 'property_type': Ev3OnOffType},
-        #{'name': 'reset', 'readonly': False},
-        {'name': 'run', 'readonly': False, 'property_type': Ev3BoolType},
-        {'name': 'run_mode', 'readonly': False},
-        {'name': 'speed_regulation_D', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'speed_regulation_I', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'speed_regulation_K', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'speed_regulation_P', 'readonly':
-            False, 'property_type': Ev3IntType},
-        {'name': 'state', 'readonly': True},
-        {'name': 'stop_mode', 'readonly': False},
-        {'name': 'stop_modes', 'readonly': False},
-        {'name': 'time_sp', 'readonly': False, 'property_type': Ev3IntType},
-        {'name': 'type', 'readonly': False},
-        {'name': 'uevent', 'readonly': True}
-    ]
-
-    const_list = ['coast', 'brake', 'hold', 'relative', 'absolute', 'A', 'B', 'C', 'D'
-                  ]
+    __metaclass__ = ev3_meta(
+        const_list=['coast', 'brake', 'hold', 'relative',
+                    'absolute', 'A', 'B', 'C', 'D'],
+        property_list=[
+            {'name': 'duty_cycle', 'read_only':
+             True, 'property_type': Ev3IntType},
+            {'name': 'duty_cycle_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'estop', 'read_only': False,
+             'property_type': Ev3IntType},
+            {'name': 'polarity_mode', 'read_only': False},
+            {'name': 'port_name', 'read_only': True},
+            {'name': 'position', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'position_mode', 'read_only': False},
+            {'name': 'position_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'pulses_per_second', 'read_only':
+             True, 'property_type': Ev3IntType},
+            {'name': 'pulses_per_second_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'ramp_down_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'ramp_up_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'regulation_mode', 'read_only':
+             False, 'property_type': Ev3OnOffType},
+            #{'name': 'reset', 'read_only': False},
+            {'name': 'run', 'read_only': False,
+                            'property_type': Ev3BoolType},
+            {'name': 'run_mode', 'read_only': False},
+            {'name': 'speed_regulation_D', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'speed_regulation_I', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'speed_regulation_K', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'speed_regulation_P', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'state', 'read_only': True},
+            {'name': 'stop_mode', 'read_only': False},
+            {'name': 'stop_modes', 'read_only': False},
+            {'name': 'time_sp', 'read_only':
+             False, 'property_type': Ev3IntType},
+            {'name': 'type', 'read_only': False},
+            {'name': 'uevent', 'read_only': True}
+        ]
+    )
 
     def __init__(self, port='', _type=''):
         Ev3Dev.__init__(self)
@@ -301,7 +296,7 @@ class Motor(Ev3Dev):
 
     def run_position_limited(self, position_sp, speed_sp,  **kwargs):
         self.run_mode = 'position'
-        kwargs['regulation_mode']=True
+        kwargs['regulation_mode'] = True
         for k in kwargs:
             v = kwargs[k]
             if (v != None):
@@ -309,3 +304,59 @@ class Motor(Ev3Dev):
         self.pulses_per_second_sp = speed_sp
         self.position_sp = position_sp
         self.start()
+
+from smbus import SMBus
+
+
+class I2CMeta(type):
+
+    def __new__(cls, name, bases, attr):
+        smbus_proxied_methods = [
+            m for m in dir(SMBus) if (m.startswith('read') or m.startswith('write'))]
+        for m in smbus_proxied_methods:
+            def create_proxied_smb_method(method):
+                def proxied_smb_method(self, *args, **kwargs):
+                    return getattr(self.b, method)(self.addr, *args, **kwargs)
+                return proxied_smb_method
+            attr[m] = create_proxied_smb_method(m)
+        return type.__new__(cls, name, bases, attr)
+
+
+class I2CS(object):
+    __metaclass__ = I2CMeta
+
+    def __init__(self, port, addr):
+        self.port = port
+        self.i2c_port = port + 2
+        self.sys_path = '/dev/i2c-%s' % self.i2c_port
+        if (not os.path.exists(self.sys_path)):
+            raise NoSuchSensorError(port)
+        self.b = SMBus(self.i2c_port)
+        self.addr = addr
+
+    def read_byte_array(self, reg, _len):
+        return [self.read_byte_data(reg + r) for r in range(_len)]
+
+    def read_byte_array_as_string(self, reg, _len):
+        return ''.join(chr(r) for r in self.read_byte_array(reg, _len))
+
+    @staticmethod
+    def i2c_prop_meta(i2c_property_list):
+        class I2CPropMeta(I2CMeta):
+
+            def __new__(cls, name, bases, attr):
+                for prop, reg_add in i2c_property_list.iteritems():
+                    def create_i2c_property(reg, read_only=True):
+                        def fget(self):
+                            return self.read_byte_data(reg)
+
+                        def fset(self, value):
+                            return self.write_byte_data(reg, value)
+                        return property(fget, None if read_only else fset)
+                    if (type(reg_add) == int):
+                        attr[prop] = create_i2c_property(reg_add)
+                    else:
+                        attr[prop] = create_i2c_property(
+                            reg_add[0], **reg_add[1])
+                return super(I2CPropMeta, cls).__new__(cls, name, bases, attr)
+        return I2CPropMeta

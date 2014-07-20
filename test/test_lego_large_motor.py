@@ -5,7 +5,7 @@ import time
 
 
 class TestLargeMotor(unittest.TestCase):
-    def test_large_motor(self):
+    def test_LargeMotor(self):
         d = LargeMotor()
         print(d.type)
         d.run_mode='forever'
