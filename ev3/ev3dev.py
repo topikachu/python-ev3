@@ -352,3 +352,73 @@ class I2CS(object):
                             reg_add[0], **reg_add[1])
                 return super(I2CPropMeta, cls).__new__(cls, name, bases, attr)
         return I2CPropMeta
+
+
+class LEDLight(Ev3Dev):
+    __metaclass__ = create_ev3_prop(
+        brightness={'read_only': False, 'property_type': Ev3IntType},
+        trigger={'read_only': False},
+        delay_on={'read_only': False, 'property_type': Ev3IntType},
+        delay_off={'read_only': False, 'property_type': Ev3IntType}
+    )
+
+    def __init__(self, light_path):
+        self.sys_path = '/sys/class/leds/' + light_path
+
+
+class LEDSide (object):
+
+    def __init__(self, left_or_right):
+        self.green = LEDLight('ev3:green:%s' % left_or_right)
+        self.red = LEDLight('ev3:red:%s' % left_or_right)
+        self._color = 0
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self.red.brightness = value & 0x01
+        self.green.brightness = (value >> 1) & 0x01
+        self._color = value
+
+    def get_operation_lights(self):
+        lights = []
+        if (self._color & 0x01):
+            lights.append(self.red)
+        if ((self._color >> 1) & 0x01):
+            lights.append(self.green)
+        return lights
+
+    def blink(self, color=0, **kwargs):
+        if (color != 0):
+            self.color = color
+        lights = self.get_operation_lights()
+        for light in lights:
+            light.trigger = 'timer'
+            for p, v in kwargs.iteritems():
+                setattr(light, p, v)
+
+    def on(self):
+        lights = self.get_operation_lights()
+        for light in lights:
+            light.trigger = 'none'
+            light.brightness = 1
+
+    def off(self):
+        lights = self.get_operation_lights()
+        for light in lights:
+            light.trigger = 'none'
+            light.brightness = 0
+
+
+class LED(object):
+
+    class COLOR:
+        RED = 1
+        GREEN = 2
+        AMBER = 3
+
+    left = LEDSide('left')
+    right = LEDSide('right')
