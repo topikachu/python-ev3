@@ -5,6 +5,7 @@ import unittest
 class TestAbsoluteIMU(unittest.TestCase):
 
     def test_absolute_IMU(self):
+        raw_input('Attach a AbsoluteIMU at port 2 then continue')
         d = AbsoluteIMU(2)
         print(d.version)
         print(d.vendor_id)

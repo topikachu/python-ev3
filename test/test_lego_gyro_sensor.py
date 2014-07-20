@@ -4,6 +4,7 @@ import unittest
 
 class TestGyroSensor(unittest.TestCase):
     def test_gyro_sensor(self):
+        raw_input('Attach a GyroSensor then continue')
         d = GyroSensor()
         raw_input('test ang')
         print(d.ang)

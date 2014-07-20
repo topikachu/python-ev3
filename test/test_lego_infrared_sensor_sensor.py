@@ -4,6 +4,7 @@ import unittest
 
 class TestInfraredSensor(unittest.TestCase):
     def test_infrared_sensor(self):
+        raw_input('Attach a InfraredSensor then continue')
         d= InfraredSensor()
         print(d.mode)
         raw_input('test proxy')

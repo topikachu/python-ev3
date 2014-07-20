@@ -6,6 +6,7 @@ import time
 
 class TesMidiumMotor(unittest.TestCase):
     def test_MidiumMotor(self):
+        raw_input('Attach a MidiumMotor then continue')
         d = MidiumMotor()
         print(d.type)
         d.run_mode='forever'

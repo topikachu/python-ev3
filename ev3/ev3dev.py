@@ -69,25 +69,20 @@ class Ev3OnOffType(object):
             return 'on' if bool(value) else 'off'
 
 
-def ev3_meta(property_list=None, const_list=None):
+def create_ev3_prop(**kwargs):
     class Ev3Meta(type):
 
         def __new__(cls, name, bases, attr):
-            if (const_list != None):
-                for c in const_list:
-                    attr[c] = c
+            for name, args in kwargs.iteritems():
+                def create_ev3_property(name, read_only=False, property_type=Ev3StringType):
+                    def fget(self):
+                        return property_type.post_read(self.read_value(name))
 
-            if (property_list != None):
-                for p in property_list:
-                    def create_ev3_property(name, read_only=False, property_type=Ev3StringType):
-                        def fget(self):
-                            return property_type.post_read(self.read_value(name))
-
-                        def fset(self, value):
-                            self.write_value(
-                                name, property_type.pre_write(value))
-                        return property(fget, fset if not read_only else None)
-                    attr[p['name']] = create_ev3_property(**p)
+                    def fset(self, value):
+                        self.write_value(
+                            name, property_type.pre_write(value))
+                    return property(fget, None if read_only else fset)
+                attr[name] = create_ev3_property(name, **args)
             return type.__new__(cls, name, bases, attr)
     return Ev3Meta
 
@@ -112,32 +107,31 @@ class Ev3Dev(object):
         if os.path.isfile(attr_file):
             f = open(attr_file, 'w')
             f.write(str(value))
-            print name, value
             f.close()
         else:
             return
 
 
 class Msensor(Ev3Dev):
-    __metaclass__ = ev3_meta(property_list=[
-        {'name': 'bin_data', 'read_only': True},
-        {'name': 'bin_data_format', 'read_only': True},
-        {'name': 'dp', 'read_only': True},
-        #{'name': 'mode', 'read_only': False},
-        {'name': 'modes', 'read_only': True},
-        {'name': 'port_name', 'read_only': True},
-        {'name': 'type_id', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'uevent', 'read_only': True},
-        {'name': 'units', 'read_only': True},
-        {'name': 'value0', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value1', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value2', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value3', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value4', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value5', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value6', 'read_only': True, 'property_type': Ev3IntType},
-        {'name': 'value7', 'read_only': True, 'property_type': Ev3IntType}
-    ])
+    __metaclass__ = create_ev3_prop(
+        bin_data={'read_only': True},
+        bin_data_format={'read_only': True},
+        dp={'read_only': True},
+        #mode={ 'read_only': False},
+        modes={'read_only': True},
+        port_name={'read_only': True},
+        type_id={'read_only': True, 'property_type': Ev3IntType},
+        uevent={'read_only': True},
+        units={'read_only': True},
+        value0={'read_only': True, 'property_type': Ev3IntType},
+        value1={'read_only': True, 'property_type': Ev3IntType},
+        value2={'read_only': True, 'property_type': Ev3IntType},
+        value3={'read_only': True, 'property_type': Ev3IntType},
+        value4={'read_only': True, 'property_type': Ev3IntType},
+        value5={'read_only': True, 'property_type': Ev3IntType},
+        value6={'read_only': True, 'property_type': Ev3IntType},
+        value7={'read_only': True, 'property_type': Ev3IntType}
+    )
 
     def __init__(self, port=-1, type_id=-1):
         Ev3Dev.__init__(self)
@@ -165,7 +159,7 @@ class Msensor(Ev3Dev):
                     break
         if (not sensor_existing):
             raise NoSuchSensorError(port, type_id)
-        self._mode = ''
+        self._mode = self.read_value('mode')
 
     @property
     def mode(self):
@@ -182,54 +176,52 @@ class Msensor(Ev3Dev):
         self.write_value('mode', value)
 
 
+class Enum(object):
+
+    def __init__(self, *args, **kwargs):
+            for arg in args:
+                kwargs[arg] = arg
+            self.enum_dict = kwargs
+
+    def __getattr__(self, name):
+        if (self.enum_dict.has_key(name)):
+            return self.enum_dict[name]
+        else:
+            raise NameError("no such item %s" % name)
+
+
 class Motor(Ev3Dev):
-    __metaclass__ = ev3_meta(
-        const_list=['coast', 'brake', 'hold', 'relative',
-                    'absolute', 'A', 'B', 'C', 'D'],
-        property_list=[
-            {'name': 'duty_cycle', 'read_only':
-             True, 'property_type': Ev3IntType},
-            {'name': 'duty_cycle_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'estop', 'read_only': False,
-             'property_type': Ev3IntType},
-            {'name': 'polarity_mode', 'read_only': False},
-            {'name': 'port_name', 'read_only': True},
-            {'name': 'position', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'position_mode', 'read_only': False},
-            {'name': 'position_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'pulses_per_second', 'read_only':
-             True, 'property_type': Ev3IntType},
-            {'name': 'pulses_per_second_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'ramp_down_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'ramp_up_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'regulation_mode', 'read_only':
-             False, 'property_type': Ev3OnOffType},
-            #{'name': 'reset', 'read_only': False},
-            {'name': 'run', 'read_only': False,
-                            'property_type': Ev3BoolType},
-            {'name': 'run_mode', 'read_only': False},
-            {'name': 'speed_regulation_D', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'speed_regulation_I', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'speed_regulation_K', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'speed_regulation_P', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'state', 'read_only': True},
-            {'name': 'stop_mode', 'read_only': False},
-            {'name': 'stop_modes', 'read_only': False},
-            {'name': 'time_sp', 'read_only':
-             False, 'property_type': Ev3IntType},
-            {'name': 'type', 'read_only': False},
-            {'name': 'uevent', 'read_only': True}
-        ]
+    STOP_MODE = Enum(COAST='coast', BRAKE='brake', HOLD='hold')
+    POSITION_MODE = Enum(RELATIVE='relative', ABSOLUTE='absolute')
+    PORT = Enum('A', 'B', 'C', 'D')
+    __metaclass__ = create_ev3_prop(
+        duty_cycle={'read_only': True, 'property_type': Ev3IntType},
+        duty_cycle_sp={'read_only': False, 'property_type': Ev3IntType},
+        estop={'read_only': False, 'property_type': Ev3IntType},
+        polarity_mode={'read_only': False},
+        port_name={'read_only': True},
+        position={'read_only': False, 'property_type': Ev3IntType},
+        position_mode={'read_only': False},
+        position_sp={'read_only': False, 'property_type': Ev3IntType},
+        pulses_per_second={'read_only': True, 'property_type': Ev3IntType},
+        pulses_per_second_sp={'read_only': False, 'property_type': Ev3IntType},
+        ramp_down_sp={'read_only': False, 'property_type': Ev3IntType},
+        ramp_up_sp={'read_only': False, 'property_type': Ev3IntType},
+        regulation_mode={'read_only': False, 'property_type': Ev3OnOffType},
+        #reset={ 'read_only': False},
+        run={'read_only': False, 'property_type': Ev3BoolType},
+        run_mode={'read_only': False},
+        speed_regulation_D={'read_only': False, 'property_type': Ev3IntType},
+        speed_regulation_I={'read_only': False, 'property_type': Ev3IntType},
+        speed_regulation_K={'read_only': False, 'property_type': Ev3IntType},
+        speed_regulation_P={'read_only': False, 'property_type': Ev3IntType},
+        state={'read_only': True},
+        stop_mode={'read_only': False},
+        stop_modes={'read_only': False},
+        time_sp={'read_only': False, 'property_type': Ev3IntType},
+        type={'read_only': False},
+        uevent={'read_only': True}
+
     )
 
     def __init__(self, port='', _type=''):
@@ -308,7 +300,7 @@ class Motor(Ev3Dev):
 from smbus import SMBus
 
 
-class I2CMeta(type):
+class I2CSMBusProxy(type):
 
     def __new__(cls, name, bases, attr):
         smbus_proxied_methods = [
@@ -323,7 +315,7 @@ class I2CMeta(type):
 
 
 class I2CS(object):
-    __metaclass__ = I2CMeta
+    __metaclass__ = I2CSMBusProxy
 
     def __init__(self, port, addr):
         self.port = port
@@ -341,11 +333,11 @@ class I2CS(object):
         return ''.join(chr(r) for r in self.read_byte_array(reg, _len))
 
     @staticmethod
-    def i2c_prop_meta(i2c_property_list):
-        class I2CPropMeta(I2CMeta):
+    def create_i2c_prop(**kwargs):
+        class I2CPropMeta(I2CSMBusProxy):
 
             def __new__(cls, name, bases, attr):
-                for prop, reg_add in i2c_property_list.iteritems():
+                for prop, reg_add in kwargs.iteritems():
                     def create_i2c_property(reg, read_only=True):
                         def fget(self):
                             return self.read_byte_data(reg)

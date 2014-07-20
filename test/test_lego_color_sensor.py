@@ -4,6 +4,7 @@ import unittest
 
 class TestColorSensor(unittest.TestCase):
     def test_color_sensor(self):
+        raw_input('Attach a ColorSensor then continue')
         d = ColorSensor()
         raw_input('test rgb')
         print(d.rgb)
