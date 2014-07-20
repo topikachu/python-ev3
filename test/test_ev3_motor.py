@@ -4,9 +4,9 @@ import time
 
 
 class TestMotor(unittest.TestCase):
+    raw_input('Attach a motor on port A then continue')
     def __init__(self,*args, **kwargs):
-        super(TestMotor, self).__init__(*args, **kwargs)
-        raw_input('Attach a motor on port A then continue')
+        super(TestMotor, self).__init__(*args, **kwargs)        
         self.d=Motor(port=Motor.PORT.A)
 
     def setUp(self):

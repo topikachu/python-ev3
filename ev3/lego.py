@@ -16,8 +16,8 @@ class ColorSensor(Msensor):
     colors = (None, 'black', 'blue', 'green',
               'yellow', 'red', 'white', 'brown')
 
-    def __init__(self):
-        Msensor.__init__(self, type_id=29)
+    def __init__(self, port=-1):
+        Msensor.__init__(self, port, type_id=29)
 
     @property
     def rgb(self):
@@ -47,8 +47,8 @@ class ColorSensor(Msensor):
 
 class InfraredSensor(Msensor):
 
-    def __init__(self):
-        Msensor.__init__(self, type_id=33)
+    def __init__(self, port=-1):
+        Msensor.__init__(self, port, type_id=33)
 
     @property
     def remote(self):
@@ -76,8 +76,8 @@ class InfraredSensor(Msensor):
 
 class GyroSensor(Msensor):
 
-    def __init__(self):
-        Msensor.__init__(self, type_id=32)
+    def __init__(self, port=-1):
+        Msensor.__init__(self, port, type_id=32)
 
     @property
     def ang(self):
@@ -97,8 +97,8 @@ class GyroSensor(Msensor):
 
 class UltrasonicSensor(Msensor):
 
-    def __init__(self):
-        Msensor.__init__(self, type_id=30)
+    def __init__(self, port=-1):
+        Msensor.__init__(self, port, type_id=30)
 
     @property
     def dist_cm(self):
@@ -128,11 +128,11 @@ class UltrasonicSensor(Msensor):
 
 class LargeMotor(Motor):
 
-    def __init__(self):
-        Motor.__init__(self, _type='tacho')
+    def __init__(self, port=''):
+        Motor.__init__(self, port, _type='tacho')
 
 
-class MidiumMotor(Motor):
+class MediumMotor(Motor):
 
-    def __init__(self):
-        Motor.__init__(self, _type='minitacho')
+    def __init__(self, port=''):
+        Motor.__init__(self, port, _type='minitacho')

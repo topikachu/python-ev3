@@ -1,13 +1,13 @@
-from ev3.lego import LargeMotor
+from ev3.lego import MediumMotor
 import unittest
 import time
 
 
 
-class TestLargeMotor(unittest.TestCase):
-    def test_large_motor(self):
-        raw_input('Attach a LargeMotor then continue')
-        d = LargeMotor()
+class TesMediumMotor(unittest.TestCase):
+    def test_medium_motor(self):
+        raw_input('Attach a MediumMotor then continue')
+        d = MediumMotor()
         print(d.type)
         d.run_forever(100, regulation_mode=False)
         print(d.run)
