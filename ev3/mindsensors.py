@@ -1,4 +1,4 @@
-from ev3dev import I2CS
+from .ev3dev import I2CS
 
 
 class MindSensorI2CS(I2CS):

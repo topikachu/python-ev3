@@ -1,21 +1,21 @@
 from ev3.lego import ColorSensor
 import unittest
-
+from util import get_input
 
 class TestColorSensor(unittest.TestCase):
     def test_color_sensor(self):
-        raw_input('Attach a ColorSensor then continue')
+        get_input('Attach a ColorSensor then continue')
         d = ColorSensor()
-        raw_input('test rgb')
+        get_input('test rgb')
         print(d.rgb)
         print(d.mode)
-        raw_input('test color')
+        get_input('test color')
         print(d.color)
         print(d.mode)
-        raw_input('test reflect')
+        get_input('test reflect')
         print(d.reflect)
         print(d.mode)
-        raw_input('test ambient')
+        get_input('test ambient')
         print(d.ambient)
         print(d.mode)
 

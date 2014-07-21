@@ -1,12 +1,12 @@
 from ev3.lego import TouchSensor
 import unittest
-
+from util import get_input
 
 class TestTouchSensor(unittest.TestCase):
     def test_touch_sensor(self):
-        raw_input('Attach a TouchSensor then continue')    	
+        get_input('Attach a TouchSensor then continue')    	
         d = TouchSensor()
-        raw_input('test pushed')
+        get_input('test pushed')
         print(d.is_pushed)
         print(d.mode)
 

@@ -1,18 +1,18 @@
 from ev3.lego import GyroSensor
 import unittest
-
+from util import get_input
 
 class TestGyroSensor(unittest.TestCase):
     def test_gyro_sensor(self):
-        raw_input('Attach a GyroSensor then continue')
+        get_input('Attach a GyroSensor then continue')
         d = GyroSensor()
-        raw_input('test ang')
+        get_input('test ang')
         print(d.ang)
         print(d.mode)
-        raw_input('test rate')
+        get_input('test rate')
         print(d.rate)
         print(d.mode)
-        raw_input('test ang_and_rate')
+        get_input('test ang_and_rate')
         print(d.ang_and_rate)
         print(d.mode)
 

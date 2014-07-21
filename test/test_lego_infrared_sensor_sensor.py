@@ -1,22 +1,22 @@
 from ev3.lego import InfraredSensor
 import unittest
-
+from util import get_input
 
 class TestInfraredSensor(unittest.TestCase):
     def test_infrared_sensor(self):
-        raw_input('Attach a InfraredSensor then continue')
+        get_input('Attach a InfraredSensor then continue')
         d= InfraredSensor()
         print(d.mode)
-        raw_input('test proxy')
+        get_input('test proxy')
         print(d.prox)
         print(d.mode)
-        raw_input('test remote')
+        get_input('test remote')
         print(d.remote)
         print(d.mode)
-        raw_input('test remote_bin')
+        get_input('test remote_bin')
         print(d.remote_bin)
         print(d.mode)
-        raw_input('test seek')
+        get_input('test seek')
         print(d.seek)
         print(d.mode)
 

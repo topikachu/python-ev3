@@ -1,12 +1,12 @@
 from ev3.ev3dev import  Msensor
 import unittest
-
+from util import get_input
 
 
 class TestMsensor(unittest.TestCase):
 
     def test_msensor(self):
-        raw_input('Attach a Msensor on port 1 then continue')
+        get_input('Attach a Msensor on port 1 then continue')
         d = Msensor(port=1)
         print(d.mode)
         type_id = d.type_id

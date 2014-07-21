@@ -1,24 +1,24 @@
 from ev3.lego import UltrasonicSensor
 import unittest
-
+from util import get_input
 
 class TestUltrasonicSensor(unittest.TestCase):
     def test_ultrasonic_sensor(self):
-        raw_input('Attach a UltrasonicSensor then continue')        
+        get_input('Attach a UltrasonicSensor then continue')        
         d = UltrasonicSensor()        
-        raw_input('test dist_cm')
+        get_input('test dist_cm')
         print(d.dist_cm)
         print(d.mode)
-        raw_input('test dist_in')
+        get_input('test dist_in')
         print(d.dist_in)
         print(d.mode)
-        raw_input('test listen')
+        get_input('test listen')
         print(d.listen)
         print(d.mode)
-        raw_input('test si_cm')
+        get_input('test si_cm')
         print(d.si_cm)
         print(d.mode)
-        raw_input('test si_in')
+        get_input('test si_in')
         print(d.si_in)
         print(d.mode)
 

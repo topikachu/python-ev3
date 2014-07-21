@@ -1,10 +1,10 @@
 from ev3.ev3dev import Motor
 import unittest
 import time
-
+from util import get_input
 
 class TestMotor(unittest.TestCase):
-    raw_input('Attach a motor on port A then continue')
+    get_input('Attach a motor on port A then continue')
     def __init__(self,*args, **kwargs):
         super(TestMotor, self).__init__(*args, **kwargs)        
         self.d=Motor(port=Motor.PORT.A)

@@ -1,6 +1,6 @@
 import os
 import glob
-
+import sys
 
 class NoSuchSensorError(Exception):
 
@@ -98,19 +98,17 @@ class Ev3Dev(object):
     def read_value(self, name):
         attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
-            f = open(attr_file)
-            value = f.read().strip()
-            f.close()
-            return value
+            with open(attr_file) as f:
+                value = f.read().strip()                
+                return value
         else:
             return None
 
     def write_value(self, name, value):
         attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
-            f = open(attr_file, 'w')
-            f.write(str(value))
-            f.close()
+            with open(attr_file, 'w') as f:
+                f.write(str(value))            
         else:
             return
 
@@ -143,23 +141,21 @@ class Msensor(Ev3Dev):
         if (port > 0):
             self.port = port
             for p in glob.glob('/sys/class/msensor/sensor*/port_name'):
-                f = file(p)
-                value = f.read().strip()
-                f.close()
-                if (value == 'in' + str(port)):
-                    self.sys_path = os.path.dirname(p)
-                    sensor_existing = True
-                    break
+                with open(p) as f:
+                    value = f.read().strip()
+                    if (value == 'in' + str(port)):
+                        self.sys_path = os.path.dirname(p)
+                        sensor_existing = True
+                        break
         if (type_id > 0 and port == -1):
             for p in glob.glob('/sys/class/msensor/sensor*/type_id'):
-                f = file(p)
-                value = int(f.read().strip())
-                f.close()
-                if (value == type_id):
-                    self.sys_path = os.path.dirname(p)
-                    self.port = int(self.port_name[2:])
-                    sensor_existing = True
-                    break
+                with open(p) as f:
+                    value = int(f.read().strip())                
+                    if (value == type_id):
+                        self.sys_path = os.path.dirname(p)
+                        self.port = int(self.port_name[2:])
+                        sensor_existing = True
+                        break
         if (not sensor_existing):
             raise NoSuchSensorError(port, type_id)
         self._mode = self.read_value('mode')
@@ -232,23 +228,21 @@ class Motor(Ev3Dev):
         if (port != ''):
             self.port = port
             for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/port_name'):
-                f = file(p)
-                value = f.read().strip()
-                f.close()
-                if (value.lower() == ('out' + port).lower()):
-                    self.sys_path = os.path.dirname(p)
-                    motor_existing = True
-                    break
+                with open(p) as f:
+                    value = f.read().strip()                
+                    if (value.lower() == ('out' + port).lower()):
+                        self.sys_path = os.path.dirname(p)
+                        motor_existing = True
+                        break
         if (_type != '' and port == ''):
             for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/type'):
-                f = file(p)
-                value = f.read().strip()
-                f.close()
-                if (value.lower() == _type.lower()):
-                    self.sys_path = os.path.dirname(p)
-                    self.port = self.port_name[3:]
-                    motor_existing = True
-                    break
+                with open(p) as f:
+                    value = f.read().strip()                
+                    if (value.lower() == _type.lower()):
+                        self.sys_path = os.path.dirname(p)
+                        self.port = self.port_name[3:]
+                        motor_existing = True
+                        break
         if (not motor_existing):
             raise NoSuchMotorError(port, _type)
 
@@ -299,7 +293,11 @@ class Motor(Ev3Dev):
         self.position_sp = position_sp
         self.start()
 
-from smbus import SMBus
+if (sys.hexversion > 0x03000000):
+    from .python3smbus.smbus import SMBus    
+else:
+    from smbus import SMBus
+    
 
 
 
@@ -401,7 +399,7 @@ class LEDSide (object):
         lights = self.get_operation_lights()
         for light in lights:
             light.trigger = 'timer'
-            for p, v in kwargs.iteritems():
+            for p, v in kwargs.items():
                 setattr(light, p, v)
 
     def on(self):

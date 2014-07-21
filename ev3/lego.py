@@ -1,4 +1,4 @@
-from ev3dev import Msensor, Motor
+from .ev3dev import Msensor, Motor
 
 
 class TouchSensor(Msensor):
