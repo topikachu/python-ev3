@@ -22,8 +22,8 @@ Install python-ev3 under a virtual env
 Python 2.7.8 (default, Jul  4 2014, 16:59:40)
 [GCC 4.9.0] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
->>> from ev3.lego import MidiumMotor
->>> d = MidiumMotor()
+>>> from ev3.lego import MediumMotor
+>>> d = MediumMotor()
 >>> d.reset()
 >>> d.run_forever(50, regulation_mode=False)
 >>> d.stop()
