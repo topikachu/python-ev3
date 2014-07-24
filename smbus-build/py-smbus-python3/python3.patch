@@ -1,0 +1,291 @@
+diff -cr i2c-tools-3.1.1.orig/debian/control i2c-tools-3.1.1/debian/control
+*** i2c-tools-3.1.1.orig/debian/control	2014-07-26 20:13:39.305699703 +0800
+--- i2c-tools-3.1.1/debian/control	2014-07-26 20:11:21.889018290 +0800
+***************
+*** 1,11 ****
+  Source: i2c-tools
+  Section: utils
+  Priority: extra
+! Build-Depends: debhelper (>= 5), python-all-dev (>= 2.6.6-3~)
+  Maintainer: Aurelien Jarno <aurel32@debian.org>
+  Standards-Version: 3.9.5
+  Homepage: http://www.lm-sensors.org
+  X-Python-Version: >= 2.2
+  
+  Package: i2c-tools
+  Architecture: any
+--- 1,12 ----
+  Source: i2c-tools
+  Section: utils
+  Priority: extra
+! Build-Depends: debhelper (>= 5), python-all-dev (>= 2.6.6-3~), python3-dev (>= 3.2)
+  Maintainer: Aurelien Jarno <aurel32@debian.org>
+  Standards-Version: 3.9.5
+  Homepage: http://www.lm-sensors.org
+  X-Python-Version: >= 2.2
++ X-Python3-Version: >=3.2
+  
+  Package: i2c-tools
+  Architecture: any
+***************
+*** 39,41 ****
+--- 40,53 ----
+   This Python module allows SMBus access through the I2C /dev interface on 
+   Linux hosts.  The host kernel must have I2C support, I2C device interface
+   support, and a bus adapter driver.
++ 
++ Package: python3-smbus
++ Architecture: any
++ Section: python
++ Depends: ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}
++ Provides: ${python3:Provides}
++ Recommends: i2c-tools
++ Description: Python3 bindings for Linux SMBus access through i2c-dev 
++  This Python3 module allows SMBus access through the I2C /dev interface on 
++  Linux hosts.  The host kernel must have I2C support, I2C device interface
++  support, and a bus adapter driver. 
+diff -cr i2c-tools-3.1.1.orig/debian/rules i2c-tools-3.1.1/debian/rules
+*** i2c-tools-3.1.1.orig/debian/rules	2014-07-26 20:13:39.305699703 +0800
+--- i2c-tools-3.1.1/debian/rules	2014-07-26 20:11:21.885018270 +0800
+***************
+*** 22,28 ****
+  export CFLAGS CPPFLAGS LDFLAGS
+  
+  PYVERS = $(shell pyversions -v -r debian/control)
+! 
+  clean:
+  	dh_testdir
+  	dh_testroot
+--- 22,28 ----
+  export CFLAGS CPPFLAGS LDFLAGS
+  
+  PYVERS = $(shell pyversions -v -r debian/control)
+! PY3VERS = $(shell py3versions -v -r debian/control)
+  clean:
+  	dh_testdir
+  	dh_testroot
+***************
+*** 37,43 ****
+  # Build everything that goes into the Debian package.  Use recursive make
+  # invocations to build all of the interesting components.
+  build: build-arch build-indep
+! build-arch: build-stamp-binaries $(PYVERS:%=build-stamp-python-%)
+  build-indep: build-stamp-binaries
+  
+  build-stamp-binaries:
+--- 37,43 ----
+  # Build everything that goes into the Debian package.  Use recursive make
+  # invocations to build all of the interesting components.
+  build: build-arch build-indep
+! build-arch: build-stamp-binaries $(PYVERS:%=build-stamp-python-%) $(PY3VERS:%=build-stamp-python3-%)
+  build-indep: build-stamp-binaries
+  
+  build-stamp-binaries:
+***************
+*** 51,57 ****
+  		CFLAGS="$(CFLAGS) -I../include" python$* setup.py build
+  	touch $@
+  
+! install: install-stamp-binaries $(PYVERS:%=install-stamp-python-%)
+  
+  install-stamp-binaries: build-stamp-binaries
+  	dh_testdir 
+--- 51,63 ----
+  		CFLAGS="$(CFLAGS) -I../include" python$* setup.py build
+  	touch $@
+  
+! build-stamp-python3-%:
+! 	dh_testdir
+! 	cd py-smbus && \
+! 		CFLAGS="$(CFLAGS) -I../include -DPYTHON_3" python$* setup.py build
+! 	touch $@	
+! 
+! install: install-stamp-binaries $(PYVERS:%=install-stamp-python-%)  $(PY3VERS:%=install-stamp-python3-%)
+  
+  install-stamp-binaries: build-stamp-binaries
+  	dh_testdir 
+***************
+*** 75,81 ****
+--- 81,96 ----
+  		CFLAGS="$(CFLAGS) -I../include" python$* setup.py install --install-layout=deb --root=$(CURDIR)/debian/python-smbus
+  
+  	touch $@
++ install-stamp-python3-%: build-stamp-python3-%
++ 	dh_testdir 
++ 	dh_testroot 
++ 	dh_installdirs
+  
++ 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp prefix=/usr
++ 	cd py-smbus && \
++ 		CFLAGS="$(CFLAGS) -I../include -DPYTHON_3" python$* setup.py install --install-layout=deb --root=$(CURDIR)/debian/python3-smbus
++ 
++ 	touch $@
+  
+  # Build architecture-independent files here.
+  binary-indep: build install
+***************
+*** 108,113 ****
+--- 123,129 ----
+  	dh_perl -a
+  	dh_makeshlibs -a
+  	dh_python2 -a
++ 	dh_python3 -a
+  	dh_installdeb -a
+  	dh_shlibdeps -a
+  	dh_gencontrol -a
+diff -cr i2c-tools-3.1.1.orig/py-smbus/smbusmodule.c i2c-tools-3.1.1/py-smbus/smbusmodule.c
+*** i2c-tools-3.1.1.orig/py-smbus/smbusmodule.c	2014-07-26 20:13:39.313699742 +0800
+--- i2c-tools-3.1.1/py-smbus/smbusmodule.c	2014-07-26 20:11:21.893018310 +0800
+***************
+*** 33,38 ****
+--- 33,39 ----
+  #define I2C_SMBUS_I2C_BLOCK_DATA	8
+  #endif
+  
++ #ifndef PYTHON_3
+  PyDoc_STRVAR(SMBus_module_doc,
+  	"This module defines an object type that allows SMBus transactions\n"
+  	"on hosts running the Linux kernel.  The host kernel must have I2C\n"
+***************
+*** 42,47 ****
+--- 43,49 ----
+  	"\n"
+  	"Because the I2C device interface is opened R/W, users of this\n"
+  	"module usually must have root permissions.\n");
++ #endif
+  
+  typedef struct {
+  	PyObject_HEAD
+***************
+*** 92,98 ****
+--- 94,104 ----
+  	PyObject *ref = SMBus_close(self);
+  	Py_XDECREF(ref);
+  
++ #ifndef PYTHON_3
+  	self->ob_type->tp_free((PyObject *)self);
++ #else
++ 	Py_TYPE(self)->tp_free((PyObject*)self);
++ #endif
+  }
+  
+  #define MAXPATH 16
+***************
+*** 432,442 ****
+--- 438,456 ----
+  
+  	for (ii = 0; ii < len; ii++) {
+  		PyObject *val = PyList_GET_ITEM(list, ii);
++ #ifndef PYTHON_3
+  		if (!PyInt_Check(val)) {
++ #else
++ 		if (!PyLong_Check(val)) {
++ #endif
+  			PyErr_SetString(PyExc_TypeError, msg);
+  			return 0; /* fail */
+  		}
++ #ifndef PYTHON_3
+  		data->block[ii+1] = (__u8)PyInt_AS_LONG(val);
++ #else
++ 		data->block[ii+1] = (__u8)PyLong_AS_LONG(val);
++ #endif		
+  	}
+  
+  	return 1; /* success */
+***************
+*** 635,642 ****
+--- 649,661 ----
+  };
+  
+  static PyTypeObject SMBus_type = {
++ #ifndef PYTHON_3
+  	PyObject_HEAD_INIT(NULL)
+  	0,				/* ob_size */
++ #else
++ 	PyVarObject_HEAD_INIT(NULL, 0)
++ #endif
++ 
+  	"smbus.SMBus",			/* tp_name */
+  	sizeof(SMBus),			/* tp_basicsize */
+  	0,				/* tp_itemsize */
+***************
+*** 675,689 ****
+  	0,				/* tp_alloc */
+  	SMBus_new,			/* tp_new */
+  };
+! 
+  static PyMethodDef SMBus_module_methods[] = {
+  	{NULL}
+  };
+  
+  #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+  #define PyMODINIT_FUNC void
+  #endif
+  PyMODINIT_FUNC
+  initsmbus(void) 
+  {
+  	PyObject* m;
+--- 694,729 ----
+  	0,				/* tp_alloc */
+  	SMBus_new,			/* tp_new */
+  };
+! #ifndef PYTHON_3
+  static PyMethodDef SMBus_module_methods[] = {
+  	{NULL}
++ #else
++ static struct PyModuleDef SMBusModule = {
++         PyModuleDef_HEAD_INIT,
++         "SMBus",     /* m_name */
++         "This module defines an object type that allows SMBus transactions\n"
++ 	    "on hosts running the Linux kernel.  The host kernel must have I2C\n"
++ 	    "support, I2C device interface support, and a bus adapter driver.\n"
++ 	    "All of these can be either built-in to the kernel, or loaded from\n"
++ 	    "modules.\n"
++ 	    "\n"
++ 	    "Because the I2C device interface is opened R/W, users of this\n"
++ 	    "module usually must have root permissions.\n",  /* m_doc */
++         -1,                  /* m_size */
++         NULL,    /* m_methods */
++         NULL,                /* m_reload */
++         NULL,                /* m_traverse */
++         NULL,                /* m_clear */
++         NULL,                /* m_free */
++ #endif
++ 
+  };
+  
+  #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+  #define PyMODINIT_FUNC void
+  #endif
+  PyMODINIT_FUNC
++ #ifndef PYTHON_3
+  initsmbus(void) 
+  {
+  	PyObject* m;
+***************
+*** 696,699 ****
+--- 736,759 ----
+  	Py_INCREF(&SMBus_type);
+  	PyModule_AddObject(m, "SMBus", (PyObject *)&SMBus_type);
+  }
++ #else
++ PyInit_smbus(void)
++ {
++ 	PyObject* m;
++ 
++     if (PyType_Ready(&SMBus_type) < 0)
++ 		return NULL;
++ 
++ 	m = PyModule_Create(&SMBusModule);
++ 	
++     if (m == NULL)
++         return NULL;
++ 
++ 	Py_INCREF(&SMBus_type);
++ 	PyModule_AddObject(m, "SMBus", (PyObject *)&SMBus_type);
++ 	
++ 	return m;
++ }
++ #endif
++ 
+  
