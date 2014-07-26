@@ -293,14 +293,7 @@ class Motor(Ev3Dev):
         self.position_sp = position_sp
         self.start()
 
-if (sys.hexversion > 0x03000000):
-    from .python3smbus.smbus import SMBus    
-else:
-    from smbus import SMBus
-    
-
-
-
+from smbus import SMBus
 def I2CSMBusProxy( cls):
     smbus_proxied_methods = [
         m for m in dir(SMBus) if (m.startswith('read') or m.startswith('write'))]
