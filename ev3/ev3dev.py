@@ -194,7 +194,7 @@ class Enum(object):
             self.enum_dict = kwargs
 
     def __getattr__(self, name):
-        if (self.enum_dict.has_key(name)):
+        if (name in self.enum_dict.keys()):
             return self.enum_dict[name]
         else:
             raise NameError("no such item %s" % name)
