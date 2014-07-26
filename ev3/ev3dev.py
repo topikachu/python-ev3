@@ -491,3 +491,59 @@ class Lcd():
     def reset(self):
         self._draw.rectangle(
             (0, 0) + self._buffer.size, outline='white', fill='white')
+
+
+class attach_ev3_keys(object):
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, cls):
+        key_const = {}
+        for key_name, key_code in self.kwargs.items():
+            def attach_key(key_name, key_code):
+                def fget(self):
+                    buf = self.polling()
+                    return self.test_bit(key_code, buf)
+                return property(fget)
+
+            setattr(cls, key_name, attach_key(key_name, key_code))
+            key_const[key_name.upper()] = key_code
+        setattr(cls, 'CODE', Enum(**key_const))
+        return cls
+
+
+import array
+import fcntl
+
+
+@attach_ev3_keys(
+    up=103,
+    down=108,
+    left=105,
+    right=106,
+    enter=28,
+    backspace=14
+)
+class Key(object):
+
+    def __init__(self):
+        pass
+
+    def EVIOCGKEY(self, length):
+        return 2 << (14 + 8 + 8) | length << (8 + 8) | ord('E') << 8 | 0x18
+
+    def test_bit(self, bit, bytes):
+        # bit in bytes is 1 when released and 0 when pressed
+        return not bool(bytes[int(bit / 8)] & 1 << bit % 8)
+
+    def polling(self):
+        KEY_MAX = 0x2ff
+        BUF_LEN = int((KEY_MAX + 7) / 8)
+        buf = array.array('B', [0] * BUF_LEN)
+        with open('/dev/input/by-path/platform-gpio-keys.0-event', 'r') as fd:
+            ret = fcntl.ioctl(fd, self.EVIOCGKEY(len(buf)), buf)
+        if (ret < 0):
+            return None
+        else:
+            return buf
