@@ -19,7 +19,7 @@ class TestLcd(unittest.TestCase):
         time.sleep(2)
         d.reset()
         font = ImageFont.truetype('/usr/share/fonts/truetype/arphic/uming.ttc',15)
-        d.draw.text((20, 20), unicode('你好,世界','UTF-8'), font=font)
+        d.draw.text((20, 20), u'你好,世界', font=font)
         d.update()
 
 

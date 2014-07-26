@@ -1,6 +1,8 @@
 import os
 import glob
 import sys
+import warnings
+
 
 class NoSuchSensorError(Exception):
 
@@ -20,6 +22,15 @@ class NoSuchMotorError(Exception):
 
     def __str__(self):
         return "No such sensor port=%s type=%s" % (self.port, self._type)
+
+
+class NoSuchLibraryError(Exception):
+
+    def __init__(self, lib=""):
+        self.lib = lib
+
+    def __str__(self):
+        return "No such library %s" % self.lib
 
 
 class Ev3StringType(object):
@@ -99,7 +110,7 @@ class Ev3Dev(object):
         attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
             with open(attr_file) as f:
-                value = f.read().strip()                
+                value = f.read().strip()
                 return value
         else:
             return None
@@ -108,7 +119,7 @@ class Ev3Dev(object):
         attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
             with open(attr_file, 'w') as f:
-                f.write(str(value))            
+                f.write(str(value))
         else:
             return
 
@@ -150,7 +161,7 @@ class Msensor(Ev3Dev):
         if (type_id > 0 and port == -1):
             for p in glob.glob('/sys/class/msensor/sensor*/type_id'):
                 with open(p) as f:
-                    value = int(f.read().strip())                
+                    value = int(f.read().strip())
                     if (value == type_id):
                         self.sys_path = os.path.dirname(p)
                         self.port = int(self.port_name[2:])
@@ -229,7 +240,7 @@ class Motor(Ev3Dev):
             self.port = port
             for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/port_name'):
                 with open(p) as f:
-                    value = f.read().strip()                
+                    value = f.read().strip()
                     if (value.lower() == ('out' + port).lower()):
                         self.sys_path = os.path.dirname(p)
                         motor_existing = True
@@ -237,7 +248,7 @@ class Motor(Ev3Dev):
         if (_type != '' and port == ''):
             for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/type'):
                 with open(p) as f:
-                    value = f.read().strip()                
+                    value = f.read().strip()
                     if (value.lower() == _type.lower()):
                         self.sys_path = os.path.dirname(p)
                         self.port = self.port_name[3:]
@@ -293,17 +304,22 @@ class Motor(Ev3Dev):
         self.position_sp = position_sp
         self.start()
 
-from smbus import SMBus
-def I2CSMBusProxy( cls):
-    smbus_proxied_methods = [
-        m for m in dir(SMBus) if (m.startswith('read') or m.startswith('write'))]
-    for m in smbus_proxied_methods:
-        def create_proxied_smb_method(method):
-            def proxied_smb_method(self, *args, **kwargs):
-                return getattr(self.b, method)(self.addr, *args, **kwargs)
-            return proxied_smb_method
-        setattr(cls, m,  create_proxied_smb_method(m))
-    return cls
+
+def I2CSMBusProxy(cls):
+    try:
+        from smbus import SMBus
+        smbus_proxied_methods = [
+            m for m in dir(SMBus) if (m.startswith('read') or m.startswith('write'))]
+        for m in smbus_proxied_methods:
+            def create_proxied_smb_method(method):
+                def proxied_smb_method(self, *args, **kwargs):
+                    return getattr(self.b, method)(self.addr, *args, **kwargs)
+                return proxied_smb_method
+            setattr(cls, m,  create_proxied_smb_method(m))
+        return cls
+    except ImportError:
+        warnings.warn('python-smbus binding not found!')
+        return cls
 
 
 @I2CSMBusProxy
@@ -315,8 +331,12 @@ class I2CS(object):
         self.sys_path = '/dev/i2c-%s' % self.i2c_port
         if (not os.path.exists(self.sys_path)):
             raise NoSuchSensorError(port)
-        self.b = SMBus(self.i2c_port)
-        self.addr = addr
+        try:
+            from smbus import SMBus
+            self.b = SMBus(self.i2c_port)
+            self.addr = addr
+        except ImportError:
+            raise NoSuchLibraryError('smbus')
 
     def read_byte_array(self, reg, _len):
         return [self.read_byte_data(reg + r) for r in range(_len)]
@@ -324,13 +344,12 @@ class I2CS(object):
     def read_byte_array_as_string(self, reg, _len):
         return ''.join(chr(r) for r in self.read_byte_array(reg, _len))
 
-
     class create_i2c_property(object):
-        def __init__(self,**kwargs):
-            self.kwargs=kwargs
-        
 
-        def __call__(self,cls):
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __call__(self, cls):
             for name, reg_address_and_read_only in self.kwargs.items():
                 def i2c_property(reg, read_only=True):
                     def fget(self):
@@ -346,7 +365,6 @@ class I2CS(object):
                         reg_address_and_read_only[0], **reg_address_and_read_only[1])
                 setattr(cls, name, prop)
             return cls
-    
 
 
 @create_ev3_property(
@@ -410,6 +428,7 @@ class LEDSide (object):
 
 class LED(object):
     COLOR = Enum(RED=1, GREEN=2, AMBER=3)
+
     class COLOR:
         RED = 1
         GREEN = 2
@@ -421,35 +440,44 @@ class LED(object):
 
 @create_ev3_property(
     tone={'read_only': False},
-    mode={'read_only':True},
-    volume={'read_only':False ,'property_type': Ev3IntType}
+    mode={'read_only': True},
+    volume={'read_only': False, 'property_type': Ev3IntType}
 )
 class Tone(Ev3Dev):
+
     def __init__(self):
         self.sys_path = '/sys/devices/platform/snd-legoev3'
 
-    def play(self,frequency,milliseconds=0):
-        self.tone='%d %d' %(frequency,frequency)
+    def play(self, frequency, milliseconds=0):
+        self.tone = '%d %d' % (frequency, frequency)
 
     def stop(self):
-        self.tone='0'
+        self.tone = '0'
 
 import os
-class Lcd():    
-    def __init__(self):
-        from PIL import Image,ImageDraw,ImageFont
 
-        SCREEN_WIDTH = 178
-        SCREEN_HEIGHT = 128
-        HW_MEM_WIDTH = ((SCREEN_WIDTH + 31)/32)*4
-        SCREEN_MEM_WIDTH = (SCREEN_WIDTH +7)/8
-        LCD_BUFFER_LENGTH = SCREEN_MEM_WIDTH*SCREEN_HEIGHT
-        LCD_HW_BUFFER_LENGTH = HW_MEM_WIDTH*SCREEN_HEIGHT
-        self._buffer= Image.new("1", (HW_MEM_WIDTH*8,SCREEN_HEIGHT),"white")
-        self._draw=ImageDraw.Draw(self._buffer)
+
+class Lcd():
+
+    def __init__(self):
+        try:
+            from PIL import Image, ImageDraw
+
+            SCREEN_WIDTH = 178
+            SCREEN_HEIGHT = 128
+            HW_MEM_WIDTH = int((SCREEN_WIDTH + 31) / 32) * 4
+            SCREEN_MEM_WIDTH = int((SCREEN_WIDTH + 7) / 8)
+            LCD_BUFFER_LENGTH = SCREEN_MEM_WIDTH * SCREEN_HEIGHT
+            LCD_HW_BUFFER_LENGTH = HW_MEM_WIDTH * SCREEN_HEIGHT
+            self._buffer = Image.new(
+                "1", (HW_MEM_WIDTH * 8, SCREEN_HEIGHT), "white")
+            self._draw = ImageDraw.Draw(self._buffer)
+        except ImportError:
+            raise NoSuchLibraryError('PIL')
+
     def update(self):
-        f=os.open('/dev/fb0',os.O_RDWR)
-        os.write(f,self._buffer.tostring("raw", "1;IR"))
+        f = os.open('/dev/fb0', os.O_RDWR)
+        os.write(f, self._buffer.tobytes("raw", "1;IR"))
         os.close(f)
 
     @property
@@ -461,7 +489,5 @@ class Lcd():
         return self._draw
 
     def reset(self):
-        self._draw.rectangle((0,0)+self._buffer.size,outline='white',fill='white')
-
-
-
+        self._draw.rectangle(
+            (0, 0) + self._buffer.size, outline='white', fill='white')
