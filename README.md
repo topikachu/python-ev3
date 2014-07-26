@@ -9,16 +9,30 @@ Program Lego Mindstorms EV3 using Python on ev3dev
 You need a working [ev3dev](https://github.com/mindboards/ev3dev) on your ev3 and have a ssh session. Please reference the [ev3dev wiki](https://github.com/mindboards/ev3dev/wiki/Getting-started-v2) to burn such system.  
 Current python-ev3 is developed on [ev3dev-jessie-2014-07-12](https://github.com/mindboards/ev3dev/releases/tag/ev3dev-jessie-2014-07-12)   
 
+## Both python 2.7 and python 3.4 are supported
+python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
+
+
 ## Install the python-ev3 on EV3
-Install python-ev3 under a virtual env
-* ```apt-get install virtualenv  virtualenvwrapper python-setuptools python-smbus```
-* ```mkvirtualenv ev3```
-* ```add2virtualenv /usr/lib/python2.7/dist-packages```
+### Python 2.7
+* ```apt-get install virtualenv  virtualenvwrapper python-setuptools python-smbus python-pil```
+* ```mkvirtualenv ev3_py27 --python=python2.7 --system-site-packages```
+* ```workon ev3_py27```
 * ```easy_install python-ev3```
+* type ```deactive``` to exit
+
+### Python 3.4
+* ```wget https://github.com/topikachu/python-ev3/releases/download/0.0.2/python3-smbus_3.1.1-1_armel.deb```
+* ```dpkg -i python3-smbus_3.1.1-1_armel.deb```
+* ```apt-get install virtualenv  virtualenvwrapper python3-setuptools python3-pil```
+* ```mkvirtualenv ev3_py34 --python=python3.4 --system-site-packages```
+* ```workon ev3_py34```
+* ```easy_install python-ev3```
+* type ```deactive``` to exit
 
 ## Example
 ```python
-(ev3)root@ev3dev:~# python
+(ev3_py27)root@ev3dev:~# python
 Python 2.7.8 (default, Jul  4 2014, 16:59:40)
 [GCC 4.9.0] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
@@ -32,7 +46,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 To exit the virtual env, type ```deactivate```
 
 ## More devices
-Plese see ```test``` to know how to use other devices.  
+Plese see [```test```](https://github.com/topikachu/python-ev3/tree/master/test) to know how to use other devices.  
 To create new sensor class please see [How to create a new sensor class ](https://github.com/topikachu/python-ev3/wiki/How-to-create-a-new-sensor-class)
         
 
