@@ -17,6 +17,7 @@ python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
 ### Python 2.7
 * ```apt-get install virtualenv  virtualenvwrapper python-setuptools python-smbus python-pil```
 * ```mkvirtualenv ev3_py27 --python=python2.7 --system-site-packages```
+* ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```workon ev3_py27```
 * ```easy_install python-ev3```
 * type ```deactive``` to exit
@@ -25,6 +26,7 @@ python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
 * ```wget https://github.com/topikachu/python-ev3/releases/download/0.0.2/python3-smbus_3.1.1-1_armel.deb```
 * ```dpkg -i python3-smbus_3.1.1-1_armel.deb```
 * ```apt-get install virtualenv  virtualenvwrapper python3-setuptools python3-pil```
+* ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```mkvirtualenv ev3_py34 --python=python3.4 --system-site-packages```
 * ```workon ev3_py34```
 * ```easy_install python-ev3```
