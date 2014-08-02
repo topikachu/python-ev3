@@ -376,6 +376,7 @@ class I2CS(object):
 class LEDLight(Ev3Dev):
 
     def __init__(self, light_path):
+        super(Ev3Dev, self).__init__()
         self.sys_path = '/sys/class/leds/' + light_path
 
 
@@ -427,7 +428,6 @@ class LEDSide (object):
 
 
 class LED(object):
-    COLOR = Enum(RED=1, GREEN=2, AMBER=3)
 
     class COLOR:
         RED = 1
@@ -446,6 +446,7 @@ class LED(object):
 class Tone(Ev3Dev):
 
     def __init__(self):
+        super(Ev3Dev, self).__init__()
         self.sys_path = '/sys/devices/platform/snd-legoev3'
 
     def play(self, frequency, milliseconds=0):
@@ -457,7 +458,7 @@ class Tone(Ev3Dev):
 import os
 
 
-class Lcd():
+class Lcd(object):
 
     def __init__(self):
         try:
