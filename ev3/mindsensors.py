@@ -98,7 +98,7 @@ class AbsoluteIMU(MindSensorI2CS):
     def acc_4g(self):
         self.command = 0x32
 
-    def acc_5g(self):
+    def acc_8g(self):
         self.command = 0x33
 
     def acc_16g(self):

@@ -15,11 +15,11 @@ class TestLcd(unittest.TestCase):
         d.reset()
         font = ImageFont.load_default() 
         d.draw.text((10, 10), "hello", font=font)
-        d.update()
-        time.sleep(2)
-        d.reset()
-        font = ImageFont.truetype('/usr/share/fonts/truetype/arphic/uming.ttc',15)
-        d.draw.text((20, 20), u'你好,世界', font=font)
+        try:
+            font = ImageFont.truetype('/usr/share/fonts/truetype/arphic/uming.ttc',15)
+            d.draw.text((20, 20), u'你好,世界', font=font)
+        except IOError:
+            print('No uming.ttc found. Skip the CJK test')
         d.update()
 
 
