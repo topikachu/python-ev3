@@ -1,12 +1,11 @@
 from ev3.ev3dev import Key
 import unittest
 from util import get_input
-import time
 
 
-class TestTone(unittest.TestCase):
+class TestKey(unittest.TestCase):
 
-    def test_tone(self):
+    def test_key(self):
         d = Key()
         get_input('Test keyboard. Hold Up key')
         print(d.up)
