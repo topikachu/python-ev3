@@ -449,8 +449,8 @@ class Tone(Ev3Dev):
         super(Ev3Dev, self).__init__()
         self.sys_path = '/sys/devices/platform/snd-legoev3'
 
-    def play(self, frequency, milliseconds=0):
-        self.tone = '%d %d' % (frequency, frequency)
+    def play(self, frequency, milliseconds=1000):
+        self.tone = '%d %d' % (frequency, milliseconds)
 
     def stop(self):
         self.tone = '0'
