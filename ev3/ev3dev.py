@@ -104,30 +104,7 @@ class create_ev3_property(object):
 
         return cls
 
-
-class Ev3Dev(object):
-
-    def __init__(self):
-        self.sys_path = ""
-
-    def read_value(self, name):
-        attr_file = os.path.join(self.sys_path, name)
-        if os.path.isfile(attr_file):
-            with open(attr_file) as f:
-                value = f.read().strip()
-                return value
-        else:
-            return None
-
-    def write_value(self, name, value):
-        attr_file = os.path.join(self.sys_path, name)
-        if os.path.isfile(attr_file):
-            with open(attr_file, 'w') as f:
-                f.write(str(value))
-        else:
-            return
-
-    def get_battery_percentage(self):
+def get_battery_percentage():
         """
         Return an int() of the percentage of battery life remaining
         """
@@ -180,6 +157,30 @@ class Ev3Dev(object):
             logger.error('voltage_max %s, voltage_min %s, voltage_now %s' %\
                          (voltage_max, voltage_min, voltage_now))
             return 0
+
+class Ev3Dev(object):
+
+    def __init__(self):
+        self.sys_path = ""
+
+    def read_value(self, name):
+        attr_file = os.path.join(self.sys_path, name)
+        if os.path.isfile(attr_file):
+            with open(attr_file) as f:
+                value = f.read().strip()
+                return value
+        else:
+            return None
+
+    def write_value(self, name, value):
+        attr_file = os.path.join(self.sys_path, name)
+        if os.path.isfile(attr_file):
+            with open(attr_file, 'w') as f:
+                f.write(str(value))
+        else:
+            return
+
+    
 
 @create_ev3_property(
     bin_data={'read_only': True},
