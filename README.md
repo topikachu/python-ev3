@@ -50,6 +50,9 @@ To exit the virtual env, type ```deactivate```
 ## More devices
 Plese see [```test```](https://github.com/topikachu/python-ev3/tree/master/test) to know how to use other devices.  
 To create new sensor class please see [How to create a new sensor class ](https://github.com/topikachu/python-ev3/wiki/How-to-create-a-new-sensor-class)
+
+## Python3 vs Python2 performance 
+[@fuzzycow](https://github.com/fuzzycow) found there's some performance problem when using Python3. Please see https://github.com/topikachu/python-ev3/issues/22
         
 
 ## Reference
