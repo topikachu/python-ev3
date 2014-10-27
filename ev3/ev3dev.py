@@ -296,7 +296,7 @@ class Motor(Ev3Dev):
         motor_existing = False
         if (port != ''):
             self.port = port
-            for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/port_name'):
+            for p in glob.glob('/sys/class/tacho-motor/motor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value.lower() == ('out' + port).lower()):
@@ -304,7 +304,7 @@ class Motor(Ev3Dev):
                         motor_existing = True
                         break
         if (_type != '' and port == ''):
-            for p in glob.glob('/sys/class/tacho-motor/tacho-motor*/type'):
+            for p in glob.glob('/sys/class/tacho-motor/motor*/type'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value.lower() == _type.lower()):
