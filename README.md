@@ -7,7 +7,7 @@ Program Lego Mindstorms EV3 using Python on ev3dev
 
 
 You need a working [ev3dev](https://github.com/mindboards/ev3dev) on your ev3 and have a ssh session. Please reference the [ev3dev wiki](https://github.com/mindboards/ev3dev/wiki/Getting-started-v2) to burn such system.  
-Current python-ev3 is developed on [ev3dev-jessie-2014-07-12](https://github.com/mindboards/ev3dev/releases/tag/ev3dev-jessie-2014-07-12)   
+Current python-ev3 is developed on [ev3dev-jessie-2014-10-07](https://github.com/mindboards/ev3dev/releases/tag/ev3dev-jessie-2014-10-07)   
 
 ## Both python 2.7 and python 3.4 are supported
 python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
@@ -27,7 +27,7 @@ python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
 * ```apt-get update```
 * ```apt-get install virtualenv  virtualenvwrapper python3-setuptools python3-smbus python3-pil```
 * ```source /etc/bash_completion.d/virtualenvwrapper```
-* ```mkvirtualenv ev3_py34 --python=python3.4 --system-site-packages```
+* ```mkvirtualenv ev3_py34 --python=/usr/bin/python3.4 --system-site-packages```
 * ```workon ev3_py34```
 * ```easy_install python-ev3```
 * type ```deactive``` to exit
