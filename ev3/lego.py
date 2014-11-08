@@ -4,7 +4,7 @@ from .ev3dev import Msensor, Motor
 class TouchSensor(Msensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=16)
+        Msensor.__init__(self, port, type_id=16, name='lego-ev3-touch')
 
     @property
     def is_pushed(self):
@@ -17,7 +17,7 @@ class ColorSensor(Msensor):
               'yellow', 'red', 'white', 'brown')
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=29)
+        Msensor.__init__(self, port, type_id=29, name='ev3-uart-29')
 
     @property
     def rgb(self):
@@ -48,7 +48,7 @@ class ColorSensor(Msensor):
 class InfraredSensor(Msensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=33)
+        Msensor.__init__(self, port, type_id=33, name='ev3-uart-33')
 
     @property
     def remote(self):
@@ -77,7 +77,7 @@ class InfraredSensor(Msensor):
 class GyroSensor(Msensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=32)
+        Msensor.__init__(self, port, type_id=32, name='ev3-uart-32')
 
     @property
     def ang(self):
@@ -98,7 +98,7 @@ class GyroSensor(Msensor):
 class UltrasonicSensor(Msensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=30)
+        Msensor.__init__(self, port, type_id=30, name='ev3-uart-30')
 
     @property
     def dist_cm(self):

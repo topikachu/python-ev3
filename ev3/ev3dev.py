@@ -10,12 +10,13 @@ logger = logging.getLogger(__name__)
 
 class NoSuchSensorError(Exception):
 
-    def __init__(self, port, type_id=None):
+    def __init__(self, port, type_id=None, name=None):
         self.port = port
         self.type_id = type_id
+        self.name =name 
 
     def __str__(self):
-        return "No such sensor port=%d type_id=%s" % (self.port, repr(self.type_id))
+        return "No such sensor port=%d type_id=%d name=%s" % (self.port, self.type_id, self.name)
 
 
 class NoSuchMotorError(Exception):
@@ -188,6 +189,7 @@ class Ev3Dev(object):
     dp={'read_only': True},
     #mode={ 'read_only': False},
     modes={'read_only': True},
+    name={'read_only': True},
     port_name={'read_only': True},
     type_id={'read_only': True, 'property_type': Ev3IntType},
     uevent={'read_only': True},
@@ -203,7 +205,7 @@ class Ev3Dev(object):
 )
 class Msensor(Ev3Dev):
 
-    def __init__(self, port=-1, type_id=-1):
+    def __init__(self, port=-1, type_id=-1, name=None):
         Ev3Dev.__init__(self)
         type_id = int(type_id)
         sensor_existing = False
@@ -216,7 +218,7 @@ class Msensor(Ev3Dev):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (type_id > 0 and port == -1):
+        if (len(glob.glob('/sys/class/msensor/sensor*/type_id')) >0 and type_id > 0 and port == -1):
             for p in glob.glob('/sys/class/msensor/sensor*/type_id'):
                 with open(p) as f:
                     value = int(f.read().strip())
@@ -225,8 +227,17 @@ class Msensor(Ev3Dev):
                         self.port = int(self.port_name[2:])
                         sensor_existing = True
                         break
+        if (len(glob.glob('/sys/class/msensor/sensor*/name')) >0 and name !=None and port == -1):
+            for p in glob.glob('/sys/class/msensor/sensor*/name'):
+                with open(p) as f:
+                    value = f.read().strip()
+                    if (name in value):
+                        self.sys_path = os.path.dirname(p)
+                        self.port = int(self.port_name[2:])
+                        sensor_existing = True
+                        break
         if (not sensor_existing):
-            raise NoSuchSensorError(port, type_id)
+            raise NoSuchSensorError(port, type_id, name)
         self._mode = self.read_value('mode')
 
     @property
