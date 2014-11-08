@@ -294,9 +294,12 @@ class Motor(Ev3Dev):
     def __init__(self, port='', _type=''):
         Ev3Dev.__init__(self)
         motor_existing = False
+        searchpath='/sys/class/tacho-motor/motor*/'
+	if (len(glob.glob(searchpath + "*"))==0):
+            searchpath='/sys/class/tacho-motor/tacho-motor*/'
         if (port != ''):
             self.port = port
-            for p in glob.glob('/sys/class/tacho-motor/motor*/port_name'):
+            for p in glob.glob(searchpath + 'port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value.lower() == ('out' + port).lower()):
@@ -304,7 +307,7 @@ class Motor(Ev3Dev):
                         motor_existing = True
                         break
         if (_type != '' and port == ''):
-            for p in glob.glob('/sys/class/tacho-motor/motor*/type'):
+            for p in glob.glob(searchpath + 'type'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value.lower() == _type.lower()):
