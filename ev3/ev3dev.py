@@ -295,7 +295,7 @@ class Motor(Ev3Dev):
         Ev3Dev.__init__(self)
         motor_existing = False
         searchpath='/sys/class/tacho-motor/motor*/'
-	if (len(glob.glob(searchpath + "*"))==0):
+        if (len(glob.glob(searchpath + "*"))==0):
             searchpath='/sys/class/tacho-motor/tacho-motor*/'
         if (port != ''):
             self.port = port
