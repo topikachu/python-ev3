@@ -26,7 +26,7 @@ class NoSuchMotorError(Exception):
         self._type = _type
 
     def __str__(self):
-        return "No such sensor port=%s type=%s" % (self.port, self._type)
+        return "No such motor port=%s type=%s" % (self.port, self._type)
 
 
 class NoSuchLibraryError(Exception):
