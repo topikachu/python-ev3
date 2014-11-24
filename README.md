@@ -6,7 +6,7 @@ Program Lego Mindstorms EV3 using Python on ev3dev
 ## What you need
 
 
-You need a working [ev3dev](https://github.com/mindboards/ev3dev) on your ev3 and have a ssh session. Please reference the [ev3dev wiki](https://github.com/mindboards/ev3dev/wiki/Getting-started-v2) to burn such system.  
+You need a working [ev3dev](https://github.com/mindboards/ev3dev) on your ev3 and have a ssh session. Please reference the [ev3dev wiki](http://www.ev3dev.org/docs/getting-started/) to burn such system.  
 Current python-ev3 is developed on [ev3dev-jessie-2014-10-07](https://github.com/mindboards/ev3dev/releases/tag/ev3dev-jessie-2014-10-07)   
 
 ## Both python 2.7 and python 3.4 are supported
