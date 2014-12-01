@@ -12,6 +12,8 @@ Current python-ev3 is developed on [ev3dev-jessie-2014-10-07](https://github.com
 ## Both python 2.7 and python 3.4 are supported
 python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
 
+## virtualenv
+Current python-ev3 is not stable enough, virtualenv is recommend. Below examples are in virtualenv. However, python-ev3 should work in a native python environment.
 
 ## Install the python-ev3 on EV3
 ### Python 2.7
