@@ -7,7 +7,7 @@ class TestInfraredSensor(unittest.TestCase):
         get_input('Attach a InfraredSensor then continue')
         d= InfraredSensor()
         print(d.mode)
-        get_input('test proxy')
+        get_input('test proximity')
         print(d.prox)
         print(d.mode)
         get_input('test remote')
