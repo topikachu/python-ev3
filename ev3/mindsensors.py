@@ -103,3 +103,31 @@ class AbsoluteIMU(MindSensorI2CS):
 
     def acc_16g(self):
         self.command = 0x34
+
+class MagicWand(MindSensorI2CS):
+
+    val = 0xff
+
+    # port = 1..4 , matching the EV3 input port where the magic wand is connected
+    def __init__(self, port, addr=0x38):
+        MindSensorI2CS.__init__(self, port, addr)
+
+    def put_data(self,v):
+        self.val=v
+        MindSensorI2CS.write_byte(self, v)
+
+    # turns all leds on
+    def led_all_on(self):
+		self.put_data(0x00)
+		
+    # turns all leds off
+    def led_all_off(self):
+		self.put_data(0xff)
+
+    # turns a specific led on. leds are indexed 1..8
+    def led_on(self, num):
+		self.put_data(self.val & (0xff - (1<<(num-1))))
+
+    # turns a specific led off. leds are indexed 1..8		
+    def led_off(self, num):
+		self.put_data(self.val | (1<<(num-1)))
