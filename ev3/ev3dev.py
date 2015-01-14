@@ -186,7 +186,7 @@ class Ev3Dev(object):
 @create_ev3_property(
     bin_data={'read_only': True},
     bin_data_format={'read_only': True},
-    dp={'read_only': True},
+    decimals={'read_only': True},
     #mode={ 'read_only': False},
     modes={'read_only': True},
     name={'read_only': True},
@@ -203,7 +203,7 @@ class Ev3Dev(object):
     value6={'read_only': True, 'property_type': Ev3IntType},
     value7={'read_only': True, 'property_type': Ev3IntType}
 )
-class Msensor(Ev3Dev):
+class LegoSensor(Ev3Dev):
 
     def __init__(self, port=-1, type_id=-1, name=None):
         Ev3Dev.__init__(self)
@@ -211,15 +211,15 @@ class Msensor(Ev3Dev):
         sensor_existing = False
         if (port > 0):
             self.port = port
-            for p in glob.glob('/sys/class/msensor/sensor*/port_name'):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/msensor/sensor*/type_id')) >0 and type_id > 0 and port == -1):
-            for p in glob.glob('/sys/class/msensor/sensor*/type_id'):
+        if (len(glob.glob('/sys/class/lego-sensor/sensor*/type_id')) >0 and type_id > 0 and port == -1):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/type_id'):
                 with open(p) as f:
                     value = int(f.read().strip())
                     if (value == type_id):
@@ -227,8 +227,8 @@ class Msensor(Ev3Dev):
                         self.port = int(self.port_name[2:])
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/msensor/sensor*/name')) >0 and name !=None and port == -1):
-            for p in glob.glob('/sys/class/msensor/sensor*/name'):
+        if (len(glob.glob('/sys/class/lego-sensor/sensor*/name')) >0 and name !=None and port == -1):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (name in value):
