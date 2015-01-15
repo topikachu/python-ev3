@@ -1,23 +1,57 @@
-from .ev3dev import Msensor, Motor
+from ev3dev import LegoSensor, Motor
 
 
-class TouchSensor(Msensor):
+class TouchSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=16, name='lego-ev3-touch')
+#Both lego-nxt-touch and lego-ev3-touch support auto
+        LegoSensor.__init__(self, port, type_id=16, name='auto')
 
     @property
     def is_pushed(self):
         self.mode = 'TOUCH'
         return bool(self.value0)
 
+class LightSensor(LegoSensor):
+    
+    def __init__(self, port=-1):
+        LegoSensor.__init__(self, port, type_id=1, name='lego-nxt-light')
+    
+    @property
+    def reflect(self):
+        self.mode = 'REFLECT'
+        #Reflected light intensity (0 to 100)
+        return self.value0/(int(self.decimals)*10)
 
-class ColorSensor(Msensor):
+    @property
+    def ambient(self):
+        self.mode = 'AMBIENT'
+        #Ambient light intensity (0 to 100)
+        return self.value0/(int(self.decimals)*10)
+
+class SoundSensor(LegoSensor):
+
+    def __init__(self, port=-1):
+        LegoSensor.__init__(self, port, type_id=1, name='nxt-analog')
+
+    @property
+    def db(self):
+        self.mode = 'ANALOG-0'
+        # Sound pressure level (0 to 1000)
+        return "%.2f" % (self.value0/(int(self.decimals)*10))
+
+    @property
+    def dba(self):
+        self.mode = 'ANALOG-1'
+        # Sound pressure level (0 to 1000)
+        return "%.2f" % (self.value0/(int(self.decimals)*10))
+
+class ColorSensor(LegoSensor):
     colors = (None, 'black', 'blue', 'green',
               'yellow', 'red', 'white', 'brown')
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=29, name='ev3-uart-29')
+        LegoSensor.__init__(self, port, type_id=29, name='ev3-uart-29')
 
     @property
     def rgb(self):
@@ -45,10 +79,10 @@ class ColorSensor(Msensor):
         return self.value0, self.value1
 
 
-class InfraredSensor(Msensor):
+class InfraredSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=33, name='ev3-uart-33')
+       LegoSensor.__init__(self, port, type_id=33, name='ev3-uart-33')
 
     @property
     def remote(self):
@@ -74,10 +108,10 @@ class InfraredSensor(Msensor):
                 (self.value6, self.value7)]
 
 
-class GyroSensor(Msensor):
+class GyroSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=32, name='ev3-uart-32')
+        LegoSensor.__init__(self, port, type_id=32, name='ev3-uart-32')
 
     @property
     def ang(self):
@@ -95,10 +129,10 @@ class GyroSensor(Msensor):
         return self.value0, self.value1
 
 
-class UltrasonicSensor(Msensor):
+class UltrasonicSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        Msensor.__init__(self, port, type_id=30, name='ev3-uart-30')
+        LegoSensor.__init__(self, port, type_id=30, name='ev3-uart-30')
 
     @property
     def dist_cm(self):
