@@ -118,16 +118,16 @@ class MagicWand(MindSensorI2CS):
 
     # turns all leds on
     def led_all_on(self):
-		self.put_data(0x00)
-		
+        self.put_data(0x00)
+        
     # turns all leds off
     def led_all_off(self):
-		self.put_data(0xff)
+        self.put_data(0xff)
 
     # turns a specific led on. leds are indexed 1..8
     def led_on(self, num):
-		self.put_data(self.val & (0xff - (1<<(num-1))))
+        self.put_data(self.val & (0xff - (1<<(num-1))))
 
-    # turns a specific led off. leds are indexed 1..8		
+    # turns a specific led off. leds are indexed 1..8       
     def led_off(self, num):
-		self.put_data(self.val | (1<<(num-1)))
+        self.put_data(self.val | (1<<(num-1)))

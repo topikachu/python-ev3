@@ -1,11 +1,11 @@
-from ev3dev import LegoSensor, Motor
+from .ev3dev import LegoSensor, Motor
 
 
 class TouchSensor(LegoSensor):
 
     def __init__(self, port=-1):
 #Both lego-nxt-touch and lego-ev3-touch support auto
-        LegoSensor.__init__(self, port, type_id=16, name='auto')
+        LegoSensor.__init__(self, port, name='lego-ev3-touch')
 
     @property
     def is_pushed(self):
@@ -15,7 +15,7 @@ class TouchSensor(LegoSensor):
 class LightSensor(LegoSensor):
     
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, type_id=1, name='lego-nxt-light')
+        LegoSensor.__init__(self, port, name='lego-nxt-light')
     
     @property
     def reflect(self):
@@ -32,7 +32,7 @@ class LightSensor(LegoSensor):
 class SoundSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, type_id=1, name='nxt-analog')
+        LegoSensor.__init__(self, port, name='nxt-analog')
 
     @property
     def db(self):
@@ -51,7 +51,7 @@ class ColorSensor(LegoSensor):
               'yellow', 'red', 'white', 'brown')
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, type_id=29, name='ev3-uart-29')
+        LegoSensor.__init__(self, port, name='ev3-uart-29')
 
     @property
     def rgb(self):
@@ -82,7 +82,7 @@ class ColorSensor(LegoSensor):
 class InfraredSensor(LegoSensor):
 
     def __init__(self, port=-1):
-       LegoSensor.__init__(self, port, type_id=33, name='ev3-uart-33')
+       LegoSensor.__init__(self, port, name='ev3-uart-33')
 
     @property
     def remote(self):
@@ -111,7 +111,7 @@ class InfraredSensor(LegoSensor):
 class GyroSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, type_id=32, name='ev3-uart-32')
+        LegoSensor.__init__(self, port, name='ev3-uart-32')
 
     @property
     def ang(self):
@@ -132,7 +132,7 @@ class GyroSensor(LegoSensor):
 class UltrasonicSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, type_id=30, name='ev3-uart-30')
+        LegoSensor.__init__(self, port, name='ev3-uart-30')
 
     @property
     def dist_cm(self):

@@ -1,5 +1,5 @@
 __all__ = ['ev3dev', 'lego','mindsensors']
 
-import ev3dev
-import lego
-import mindsensors
+from ev3 import ev3dev
+from ev3 import lego
+from ev3 import mindsensors

@@ -10,13 +10,12 @@ logger = logging.getLogger(__name__)
 
 class NoSuchSensorError(Exception):
 
-    def __init__(self, port, type_id=None, name=None):
+    def __init__(self, port, name=None):
         self.port = port
-        self.type_id = type_id
         self.name =name 
 
     def __str__(self):
-        return "No such sensor port=%d type_id=%d name=%s" % (self.port, self.type_id, self.name)
+        return "No such sensor port=%d name=%s" % (self.port, self.name)
 
 
 class NoSuchMotorError(Exception):
@@ -191,7 +190,6 @@ class Ev3Dev(object):
     modes={'read_only': True},
     name={'read_only': True},
     port_name={'read_only': True},
-    type_id={'read_only': True, 'property_type': Ev3IntType},
     uevent={'read_only': True},
     units={'read_only': True},
     value0={'read_only': True, 'property_type': Ev3IntType},
@@ -205,9 +203,8 @@ class Ev3Dev(object):
 )
 class LegoSensor(Ev3Dev):
 
-    def __init__(self, port=-1, type_id=-1, name=None):
+    def __init__(self, port=-1, name=None):
         Ev3Dev.__init__(self)
-        type_id = int(type_id)
         sensor_existing = False
         if (port > 0):
             self.port = port
@@ -218,17 +215,8 @@ class LegoSensor(Ev3Dev):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/lego-sensor/sensor*/type_id')) >0 and type_id > 0 and port == -1):
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/type_id'):
-                with open(p) as f:
-                    value = int(f.read().strip())
-                    if (value == type_id):
-                        self.sys_path = os.path.dirname(p)
-                        self.port = int(self.port_name[2:])
-                        sensor_existing = True
-                        break
-        if (len(glob.glob('/sys/class/lego-sensor/sensor*/name')) >0 and name !=None and port == -1):
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/name'):
+        if (len(glob.glob('/sys/class/lego-sensor/sensor*/driver_name')) >0 and name !=None and port == -1):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/driver_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (name in value):
@@ -237,7 +225,7 @@ class LegoSensor(Ev3Dev):
                         sensor_existing = True
                         break
         if (not sensor_existing):
-            raise NoSuchSensorError(port, type_id, name)
+            raise NoSuchSensorError(port, name)
         self._mode = self.read_value('mode')
 
     @property
