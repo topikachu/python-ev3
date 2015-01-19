@@ -208,15 +208,15 @@ class LegoSensor(Ev3Dev):
         sensor_existing = False
         if (port > 0):
             self.port = port
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
+            for p in glob.glob('/sys/class/msensor/sensor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/lego-sensor/sensor*/driver_name')) >0 and name !=None and port == -1):
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/driver_name'):
+        if (len(glob.glob('/sys/class/msensor/sensor*/name')) >0 and name !=None and port == -1):
+            for p in glob.glob('/sys/class/msensor/sensor*/name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (name in value):
