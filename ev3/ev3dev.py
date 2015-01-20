@@ -499,6 +499,8 @@ class LED(object):
         NONE = (0, 0)
         RED = (255, 0)
         GREEN = (0, 255)
+        YELLOW = (25, 255)
+        ORANGE = (120, 255)
         AMBER = (255, 255)
 
     left = LEDSide('left')
@@ -615,3 +617,4 @@ class Key(object):
             return None
         else:
             return buf
+
