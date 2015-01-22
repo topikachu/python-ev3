@@ -8,11 +8,12 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 
+
 class NoSuchSensorError(Exception):
 
     def __init__(self, port, name=None):
         self.port = port
-        self.name =name 
+        self.name = name
 
     def __str__(self):
         return "No such sensor port=%d name=%s" % (self.port, self.name)
@@ -104,59 +105,64 @@ class create_ev3_property(object):
 
         return cls
 
+
 def get_battery_percentage():
-        """
-        Return an int() of the percentage of battery life remaining
-        """
-        voltage_max = None
-        voltage_min = None
-        voltage_now = None
+    """
+    Return an int() of the percentage of battery life remaining
+    """
+    voltage_max = None
+    voltage_min = None
+    voltage_now = None
 
-        with open('/sys/devices/platform/legoev3-battery/power_supply/legoev3-battery/uevent', 'r') as fh:
-            for line in fh:
+    with open('/sys/devices/platform/legoev3-battery/power_supply/legoev3-battery/uevent', 'r') as fh:
+        for line in fh:
 
-                if not voltage_max:
-                    re_voltage_max = re.search('POWER_SUPPLY_VOLTAGE_MAX_DESIGN=(\d+)', line)
+            if not voltage_max:
+                re_voltage_max = re.search(
+                    'POWER_SUPPLY_VOLTAGE_MAX_DESIGN=(\d+)', line)
 
-                    if re_voltage_max:
-                        voltage_max = int(re_voltage_max.group(1))
-                        continue
+                if re_voltage_max:
+                    voltage_max = int(re_voltage_max.group(1))
+                    continue
 
-                if not voltage_min:
-                    re_voltage_min = re.search('POWER_SUPPLY_VOLTAGE_MIN_DESIGN=(\d+)', line)
+            if not voltage_min:
+                re_voltage_min = re.search(
+                    'POWER_SUPPLY_VOLTAGE_MIN_DESIGN=(\d+)', line)
 
-                    if re_voltage_min:
-                        voltage_min = int(re_voltage_min.group(1))
-                        continue
+                if re_voltage_min:
+                    voltage_min = int(re_voltage_min.group(1))
+                    continue
 
-                if not voltage_now:
-                    re_voltage_now = re.search('POWER_SUPPLY_VOLTAGE_NOW=(\d+)', line)
+            if not voltage_now:
+                re_voltage_now = re.search(
+                    'POWER_SUPPLY_VOLTAGE_NOW=(\d+)', line)
 
-                    if re_voltage_now:
-                        voltage_now = int(re_voltage_now.group(1))
+                if re_voltage_now:
+                    voltage_now = int(re_voltage_now.group(1))
 
-                if re_voltage_max and re_voltage_min and re_voltage_now:
-                    break
+            if re_voltage_max and re_voltage_min and re_voltage_now:
+                break
 
-        if voltage_max and voltage_min and voltage_now:
+    if voltage_max and voltage_min and voltage_now:
 
-            # This happens with the EV3 rechargeable battery if it is fully charge
-            if voltage_now >= voltage_max:
-                return 100
+        # This happens with the EV3 rechargeable battery if it is fully charge
+        if voltage_now >= voltage_max:
+            return 100
 
-            # Haven't seen this scenario but it can't hurt to check for it
-            elif voltage_now <= voltage_min:
-                return 0
-
-            # voltage_now is between the min and max
-            else:
-                voltage_max -= voltage_min
-                voltage_now -= voltage_min
-                return int(voltage_now/float(voltage_max) * 100)
-        else:
-            logger.error('voltage_max %s, voltage_min %s, voltage_now %s' %\
-                         (voltage_max, voltage_min, voltage_now))
+        # Haven't seen this scenario but it can't hurt to check for it
+        elif voltage_now <= voltage_min:
             return 0
+
+        # voltage_now is between the min and max
+        else:
+            voltage_max -= voltage_min
+            voltage_now -= voltage_min
+            return int(voltage_now / float(voltage_max) * 100)
+    else:
+        logger.error('voltage_max %s, voltage_min %s, voltage_now %s' %
+                     (voltage_max, voltage_min, voltage_now))
+        return 0
+
 
 class Ev3Dev(object):
 
@@ -180,7 +186,6 @@ class Ev3Dev(object):
         else:
             return
 
-    
 
 @create_ev3_property(
     bin_data={'read_only': True},
@@ -208,15 +213,15 @@ class LegoSensor(Ev3Dev):
         sensor_existing = False
         if (port > 0):
             self.port = port
-            for p in glob.glob('/sys/class/msensor/sensor*/port_name'):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/msensor/sensor*/name')) >0 and name !=None and port == -1):
-            for p in glob.glob('/sys/class/msensor/sensor*/name'):
+        if (len(glob.glob('/sys/class/lego-sensor/sensor*/driver_name')) > 0 and name != None and port == -1):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/driver_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (name in value):
@@ -246,9 +251,9 @@ class LegoSensor(Ev3Dev):
 class Enum(object):
 
     def __init__(self, *args, **kwargs):
-            for arg in args:
-                kwargs[arg] = arg
-            self.enum_dict = kwargs
+        for arg in args:
+            kwargs[arg] = arg
+        self.enum_dict = kwargs
 
     def __getattr__(self, name):
         if (name in self.enum_dict.keys()):
@@ -293,9 +298,9 @@ class Motor(Ev3Dev):
     def __init__(self, port='', _type=''):
         Ev3Dev.__init__(self)
         motor_existing = False
-        searchpath='/sys/class/tacho-motor/motor*/'
-        if (len(glob.glob(searchpath + "*"))==0):
-            searchpath='/sys/class/tacho-motor/tacho-motor*/'
+        searchpath = '/sys/class/tacho-motor/motor*/'
+        if (len(glob.glob(searchpath + "*")) == 0):
+            searchpath = '/sys/class/tacho-motor/tacho-motor*/'
         if (port != ''):
             self.port = port
             for p in glob.glob(searchpath + 'port_name'):
@@ -459,38 +464,28 @@ class LEDSide (object):
         assert len(value) == 2
         assert 0 <= value[0] <= self.red.max_brightness
         assert 0 <= value[1] <= self.green.max_brightness
-        self.red.brightness = value[0]
-        self.green.brightness = value[1]
-        self._color = tuple(value)
+        self._color = (
+            self.red.brightness, self.green.brightness) = tuple(value)
 
-    def get_operation_lights(self):
-        lights = []
-        if (self._color[0]):
-            lights.append(self.red)
-        if (self._color[1]):
-            lights.append(self.green)
-        return lights
-
+    # below code are written on a pc
+        # not tested yet!
     def blink(self, color=(0, 0), **kwargs):
         if (color != (0, 0)):
             self.color = color
-        lights = self.get_operation_lights()
-        for light in lights:
+        for index, light in enumerate((self.red, self.green)):
+            if (not self._color[index]):
+                continue
             light.trigger = 'timer'
             for p, v in kwargs.items():
                 setattr(light, p, v)
 
     def on(self):
-        lights = self.get_operation_lights()
-        for light in lights:
-            light.trigger = 'none'
-            light.brightness = light.max_brightness
+        self.green.trigger, self.red.trigger = 'none', 'none'
+        self.red.brightness, self.green.brightness = self._color
 
     def off(self):
-        lights = self.get_operation_lights()
-        for light in lights:
-            light.trigger = 'none'
-            light.brightness = 0
+        self.green.trigger, self.red.trigger = 'none', 'none'
+        self.red.brightness, self.green.brightness = 0, 0
 
 
 class LED(object):
@@ -523,8 +518,6 @@ class Tone(Ev3Dev):
 
     def stop(self):
         self.tone = '0'
-
-import os
 
 
 class Lcd(object):
@@ -617,4 +610,3 @@ class Key(object):
             return None
         else:
             return buf
-
