@@ -208,15 +208,15 @@ class LegoSensor(Ev3Dev):
         sensor_existing = False
         if (port > 0):
             self.port = port
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
+            for p in glob.glob('/sys/class/msensor/sensor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
-        if (len(glob.glob('/sys/class/lego-sensor/sensor*/driver_name')) >0 and name !=None and port == -1):
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/driver_name'):
+        if (len(glob.glob('/sys/class/msensor/sensor*/name')) >0 and name !=None and port == -1):
+            for p in glob.glob('/sys/class/msensor/sensor*/name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (name in value):
@@ -429,6 +429,7 @@ class I2CS(object):
 
 @create_ev3_property(
     brightness={'read_only': False, 'property_type': Ev3IntType},
+    max_brightness={'read_only': True, 'property_type': Ev3IntType},
     trigger={'read_only': False},
     delay_on={'read_only': False, 'property_type': Ev3IntType},
     delay_off={'read_only': False, 'property_type': Ev3IntType}
@@ -445,28 +446,33 @@ class LEDSide (object):
     def __init__(self, left_or_right):
         self.green = LEDLight('ev3:green:%s' % left_or_right)
         self.red = LEDLight('ev3:red:%s' % left_or_right)
-        self._color = 0
+        self._color = (0, 0)
 
     @property
     def color(self):
+        """LED color (RED, GREEN), where RED and GREEN are integers
+        between 0 and 255."""
         return self._color
 
     @color.setter
     def color(self, value):
-        self.red.brightness = value & 0x01
-        self.green.brightness = (value >> 1) & 0x01
-        self._color = value
+        assert len(value) == 2
+        assert 0 <= value[0] <= self.red.max_brightness
+        assert 0 <= value[1] <= self.green.max_brightness
+        self.red.brightness = value[0]
+        self.green.brightness = value[1]
+        self._color = tuple(value)
 
     def get_operation_lights(self):
         lights = []
-        if (self._color & 0x01):
+        if (self._color[0]):
             lights.append(self.red)
-        if ((self._color >> 1) & 0x01):
+        if (self._color[1]):
             lights.append(self.green)
         return lights
 
-    def blink(self, color=0, **kwargs):
-        if (color != 0):
+    def blink(self, color=(0, 0), **kwargs):
+        if (color != (0, 0)):
             self.color = color
         lights = self.get_operation_lights()
         for light in lights:
@@ -478,7 +484,7 @@ class LEDSide (object):
         lights = self.get_operation_lights()
         for light in lights:
             light.trigger = 'none'
-            light.brightness = 1
+            light.brightness = light.max_brightness
 
     def off(self):
         lights = self.get_operation_lights()
@@ -490,9 +496,12 @@ class LEDSide (object):
 class LED(object):
 
     class COLOR:
-        RED = 1
-        GREEN = 2
-        AMBER = 3
+        NONE = (0, 0)
+        RED = (255, 0)
+        GREEN = (0, 255)
+        YELLOW = (25, 255)
+        ORANGE = (120, 255)
+        AMBER = (255, 255)
 
     left = LEDSide('left')
     right = LEDSide('right')
@@ -608,3 +617,4 @@ class Key(object):
             return None
         else:
             return buf
+
