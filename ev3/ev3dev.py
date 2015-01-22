@@ -467,8 +467,6 @@ class LEDSide (object):
         self._color = (
             self.red.brightness, self.green.brightness) = tuple(value)
 
-    # below code are written on a pc
-        # not tested yet!
     def blink(self, color=(0, 0), **kwargs):
         if (color != (0, 0)):
             self.color = color
