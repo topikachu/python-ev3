@@ -3,7 +3,7 @@
 from setuptools  import setup
 
 setup(name='python-ev3',
-      version='0.0.2.5',
+      version='0.0.2.6',
       license='Apache License 2.0',
       description='Python library of ev3dev firmware',
       author='Gong Yi',
