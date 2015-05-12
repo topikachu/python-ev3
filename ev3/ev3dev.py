@@ -92,9 +92,12 @@ class create_ev3_property(object):
 
     def __call__(self, cls):
         for name, args in self.kwargs.items():
-            def ev3_property(name, read_only=False, property_type=Ev3StringType):
+            def ev3_property(name, read_only=False, write_only=False, property_type=Ev3StringType):
                 def fget(self):
-                    return property_type.post_read(self.read_value(name))
+                    if not write_only:
+                        return property_type.post_read(self.read_value(name))
+                    else:
+                        return None
 
                 def fset(self, value):
                     self.write_value(
@@ -216,7 +219,8 @@ class LegoSensor(Ev3Dev):
             for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
                 with open(p) as f:
                     value = f.read().strip()
-                    if (value == 'in' + str(port)):
+                    port_len = len(str(port))
+                    if (value[:port_len+2] == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
@@ -263,31 +267,25 @@ class Enum(object):
 
 
 @create_ev3_property(
+    commands={'read_only': True},
+    command={'read_only': True, 'write_only': True},
+    count_per_rot={'read_only': True, 'property_type': Ev3IntType},
     duty_cycle={'read_only': True, 'property_type': Ev3IntType},
     duty_cycle_sp={'read_only': False, 'property_type': Ev3IntType},
-    estop={'read_only': False, 'property_type': Ev3IntType},
+    encoder_polarity={'read_only': False},
     polarity_mode={'read_only': False},
     port_name={'read_only': True},
     position={'read_only': False, 'property_type': Ev3IntType},
-    position_mode={'read_only': False},
     position_sp={'read_only': False, 'property_type': Ev3IntType},
-    pulses_per_second={'read_only': True, 'property_type': Ev3IntType},
-    pulses_per_second_sp={'read_only': False, 'property_type': Ev3IntType},
     ramp_down_sp={'read_only': False, 'property_type': Ev3IntType},
     ramp_up_sp={'read_only': False, 'property_type': Ev3IntType},
-    regulation_mode={'read_only': False, 'property_type': Ev3OnOffType},
-    #reset={ 'read_only': False},
-    run={'read_only': False, 'property_type': Ev3BoolType},
-    run_mode={'read_only': False},
-    speed_regulation_D={'read_only': False, 'property_type': Ev3IntType},
-    speed_regulation_I={'read_only': False, 'property_type': Ev3IntType},
-    speed_regulation_K={'read_only': False, 'property_type': Ev3IntType},
-    speed_regulation_P={'read_only': False, 'property_type': Ev3IntType},
+    speed={'read_only': True, 'property_type': Ev3IntType},
+    speed_regulation={'read_only': False, 'property_type': Ev3OnOffType},
+    speed_sp={'read_only': False, 'property_type': Ev3IntType},
     state={'read_only': True},
-    stop_mode={'read_only': False},
-    stop_modes={'read_only': False},
+    stop_command={'read_only': False},
+    stop_commands={'read_only': True},
     time_sp={'read_only': False, 'property_type': Ev3IntType},
-    type={'read_only': False},
     uevent={'read_only': True}
 )
 class Motor(Ev3Dev):
@@ -299,8 +297,6 @@ class Motor(Ev3Dev):
         Ev3Dev.__init__(self)
         motor_existing = False
         searchpath = '/sys/class/tacho-motor/motor*/'
-        if (len(glob.glob(searchpath + "*")) == 0):
-            searchpath = '/sys/class/tacho-motor/tacho-motor*/'
         if (port != ''):
             self.port = port
             for p in glob.glob(searchpath + 'port_name'):
@@ -323,50 +319,65 @@ class Motor(Ev3Dev):
             raise NoSuchMotorError(port, _type)
 
     def stop(self):
-        self.run = False
+        self.write_value('command','stop')
 
     def start(self):
-        self.run = True
+        self.write_value('command',self.mode)
 
     def reset(self):
-        self.write_value('reset', 1)
+        self.write_value('command','reset')
+
+#setup functions just set up all the values, run calls start (run=1)
+#these are separated so that multiple motors can be started at the same time
+
+    def setup_forever(self, speed_sp, **kwargs):
+        self.mode = 'run-forever'
+        for k in kwargs:
+            v = kwargs[k]
+            if (v != None):
+                setattr(self, k, v)
+        speed_regulation = self.speed_regulation
+        if (speed_regulation):
+            self.speed_sp = int(speed_sp)
+        else:
+            self.duty_cycle_sp = int(speed_sp)
 
     def run_forever(self, speed_sp, **kwargs):
-        self.run_mode = 'forever'
+        self.setup_forever(speed_sp,**kwargs)
+        self.start()
+
+    def setup_time_limited(self, time_sp, speed_sp, **kwargs):
+        self.mode = 'run-timed'
         for k in kwargs:
             v = kwargs[k]
             if (v != None):
                 setattr(self, k, v)
-        regulation_mode = self.regulation_mode
-        if (regulation_mode):
-            self.pulses_per_second_sp = speed_sp
+        speed_regulation = self.speed_regulation
+        if (speed_regulation):
+            self.speed_sp = int(speed_sp)
         else:
-            self.duty_cycle_sp = speed_sp
-        self.start()
+            self.duty_cycle_sp = int(speed_sp)
+        self.time_sp = int(time_sp)
 
     def run_time_limited(self, time_sp, speed_sp,  **kwargs):
-        self.run_mode = 'time'
+        self.setup_time_limited(time_sp,speed_sp,**kwargs)
+        self.start()
+ 
+    def setup_position_limited(self, position_sp, speed_sp, absolute=True, **kwargs):
+        if absolute==True:
+          self.mode = 'run-to-abs-pos'
+        else:
+          self.mode = 'run-to-rel-pos'
+        kwargs['speed_regulation'] = True
         for k in kwargs:
             v = kwargs[k]
             if (v != None):
                 setattr(self, k, v)
-        regulation_mode = self.regulation_mode
-        if (regulation_mode):
-            self.pulses_per_second_sp = speed_sp
-        else:
-            self.duty_cycle_sp = speed_sp
-        self.time_sp = time_sp
-        self.start()
+        self.speed_sp = int(speed_sp)
+        self.position_sp = int(position_sp)
 
     def run_position_limited(self, position_sp, speed_sp,  **kwargs):
-        self.run_mode = 'position'
-        kwargs['regulation_mode'] = True
-        for k in kwargs:
-            v = kwargs[k]
-            if (v != None):
-                setattr(self, k, v)
-        self.pulses_per_second_sp = speed_sp
-        self.position_sp = position_sp
+        self.setup_position_limited(position_sp,speed_sp,**kwargs)
         self.start()
 
 
