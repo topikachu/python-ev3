@@ -116,13 +116,13 @@ class Event(object):
 
     repeat = property(
         lambda self: self._repeat,
-        lambda self, value: setarrt(self, '_repeat', bool(value)),
+        lambda self, value: setattr(self, '_repeat', bool(value)),
         doc="Whether to call target every time `condition` is true, even "
         "if it haven't changed since last poll.")
 
     count = property(
         lambda self: self._count,
-        lambda self, value: setarrt(self, '_count', int(value)),
+        lambda self, value: setattr(self, '_count', int(value)),
         doc='Remaining number of times this event can be fired before it is '
         'automatically unregistered.')
 
