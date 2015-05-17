@@ -7,7 +7,7 @@ Program Lego Mindstorms EV3 using Python on ev3dev
 
 
 You need a working [ev3dev](https://github.com/mindboards/ev3dev) on your ev3 and have a ssh session. Please reference the [ev3dev site](http://www.ev3dev.org/docs/getting-started/) to burn such system.  
-Current python-ev3 is developed on [ev3dev-jessie-2014-12-01](https://github.com/ev3dev/ev3dev/releases/tag/ev3dev-jessie-2014-12-01)   
+Current python-ev3 is developed on [ev3dev-jessie-2015-05-01](https://github.com/ev3dev/ev3dev/releases/tag/ev3dev-jessie-2015-05-01)   
 
 ## Both python 2.7 and python 3.4 are supported
 python-ev3 is tested on the ev3-dev in python2.7 and python3.4.
@@ -59,5 +59,4 @@ To create new sensor class please see [How to create a new sensor class ](https:
         
 
 ## Reference
-* ev3 opensource project: https://github.com/mindboards/ev3sources
-* ev3-dev: https://github.com/mindboards/ev3dev
+* ev3-dev: http://www.ev3dev.org/
