@@ -13,18 +13,16 @@ class TestMotor(unittest.TestCase):
         self.d.reset()
 
     def test_run(self):
-        self.d.run_mode = 'forever'
-        self.d.regulation_mode = True
-        self.d.pulses_per_second_sp = 200
+        self.d.setup_forever(200,speed_regulation = True)
         self.d.start()
         time.sleep(5)
         self.d.stop()
 
     def test_run_forever(self):
-        self.d.run_forever(50, regulation_mode=False)
+        self.d.run_forever(50, speed_regulation=False)
         time.sleep(5)
         self.d.stop()
-        self.d.run_forever(200, regulation_mode=True)
+        self.d.run_forever(200, speed_regulation=True)
         time.sleep(5)
         self.d.stop()
 

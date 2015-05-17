@@ -8,9 +8,9 @@ class TestLargeMotor(unittest.TestCase):
     def test_large_motor(self):
         get_input('Attach a LargeMotor then continue')
         d = LargeMotor()
-        print(d.type)
-        d.run_forever(100, regulation_mode=False)
-        print(d.run)
+        print(d.driver_name)
+        d.run_forever(100, speed_regulation=False)
+        print(d.state)
         time.sleep(5)
         d.stop()
 if __name__ == '__main__':

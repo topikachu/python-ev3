@@ -205,10 +205,10 @@ class UltrasonicSensor(LegoSensor):
 class LargeMotor(Motor):
 
     def __init__(self, port=''):
-        Motor.__init__(self, port, _type='tacho')
+        Motor.__init__(self, port, _type='lego-ev3-l-motor')
 
 
 class MediumMotor(Motor):
 
     def __init__(self, port=''):
-        Motor.__init__(self, port, _type='minitacho')
+        Motor.__init__(self, port, _type='lego-ev3-m-motor')

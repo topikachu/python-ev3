@@ -270,6 +270,7 @@ class Enum(object):
     commands={'read_only': True},
     command={'read_only': True, 'write_only': True},
     count_per_rot={'read_only': True, 'property_type': Ev3IntType},
+    driver_name={'read_only': True},
     duty_cycle={'read_only': True, 'property_type': Ev3IntType},
     duty_cycle_sp={'read_only': False, 'property_type': Ev3IntType},
     encoder_polarity={'read_only': False},
@@ -307,7 +308,7 @@ class Motor(Ev3Dev):
                         motor_existing = True
                         break
         if (_type != '' and port == ''):
-            for p in glob.glob(searchpath + 'type'):
+            for p in glob.glob(searchpath + 'driver_name'):
                 with open(p) as f:
                     value = f.read().strip()
                     if (value.lower() == _type.lower()):
