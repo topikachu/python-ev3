@@ -230,7 +230,7 @@ class LegoSensor(Ev3Dev):
                     value = f.read().strip()
                     if (name in value):
                         self.sys_path = os.path.dirname(p)
-                        self.port = int(self.port_name[2:])
+                        self.port = int(self.port_name.split(':')[0][2:])
                         sensor_existing = True
                         break
         if (not sensor_existing):
