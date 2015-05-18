@@ -4,7 +4,7 @@ from .ev3dev import LegoSensor, Motor
 class TouchSensor(LegoSensor):
 
     def __init__(self, port=-1):
-#Both lego-nxt-touch and lego-ev3-touch support auto
+        # Both lego-nxt-touch and lego-ev3-touch support auto
         LegoSensor.__init__(self, port, name='lego-ev3-touch')
 
     @property
@@ -12,39 +12,41 @@ class TouchSensor(LegoSensor):
         self.mode = 'TOUCH'
         return bool(self.value0)
 
+
 class LightSensor(LegoSensor):
-    
+
     def __init__(self, port=-1):
         LegoSensor.__init__(self, port, name='lego-nxt-light')
-    
+
     @property
     def reflect(self):
         self.mode = 'REFLECT'
-        #Reflected light intensity (0 to 100)
-        return self.value0/(int(self.decimals)*10)
+        # Reflected light intensity (0 to 100)
+        return self.value0/10.0
 
     @property
     def ambient(self):
         self.mode = 'AMBIENT'
-        #Ambient light intensity (0 to 100)
-        return self.value0/(int(self.decimals)*10)
+        # Ambient light intensity (0 to 100)
+        return self.value0/10.0
+
 
 class SoundSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, name='nxt-analog')
+        LegoSensor.__init__(self, port, name='lego-nxt-sound')
 
     @property
     def db(self):
-        self.mode = 'ANALOG-0'
+        self.mode = 'DB'
         # Sound pressure level (0 to 1000)
-        return "%.2f" % (self.value0/(int(self.decimals)*10))
+        return self.value0/10.0
 
     @property
     def dba(self):
-        self.mode = 'ANALOG-1'
+        self.mode = 'DBA'
         # Sound pressure level (0 to 1000)
-        return "%.2f" % (self.value0/(int(self.decimals)*10))
+        return self.value0/10.0
 
 
 class ColorSensor(LegoSensor):
@@ -95,9 +97,10 @@ class ColorSensor(LegoSensor):
 class InfraredSensor(LegoSensor):
 
     def __init__(self, port=-1):
-       LegoSensor.__init__(self, port, name='ev3-uart-33')
+        LegoSensor.__init__(self, port, name='ev3-uart-33')
 
     class REMOTE:
+
         """Button values for the `remote` property."""
         NONE = 0
         RED_UP = 1
@@ -135,7 +138,7 @@ class InfraredSensor(LegoSensor):
     def seek(self):
         """IR Seeker mode. A list of (`heading`, `distance`) pairs for each of
         the 4 channels.
-        
+
         When looking in the same direction as the sensor, `heading` =
         -25 is far left and `heading` = +25 is far right.
 
@@ -179,12 +182,12 @@ class UltrasonicSensor(LegoSensor):
     @property
     def dist_cm(self):
         self.mode = 'US-DIST-CM'
-        return self.value0
+        return self.value0/10.0
 
     @property
     def dist_in(self):
         self.mode = 'US-DIST-IN'
-        return self.value0
+        return self.value0/10.0
 
     @property
     def listen(self):
@@ -194,12 +197,12 @@ class UltrasonicSensor(LegoSensor):
     @property
     def si_cm(self):
         self.mode_force_flush('US-SI-CM')
-        return self.value0
+        return self.value0/10.0
 
     @property
     def si_in(self):
         self.mode_force_flush('US-SI-IN')
-        return self.value0
+        return self.value0/10.0
 
 
 class LargeMotor(Motor):
