@@ -1,4 +1,5 @@
 from .ev3dev import I2CS
+from .ev3dev import LegoSensor
 
 
 class MindSensorI2CS(I2CS):
@@ -43,91 +44,132 @@ class PSPNxV4(MindSensorI2CS):
         self.command = 0x49
 
 
-def absoluteIMU_property(cls):
-    for prop in ['x_acc', 'y_acc', 'z_acc',
-                             'x_raw_magnetic', 'y_raw_magnetic', 'z_raw_magnetic',
-                             'x_gyro', 'y_gyro', 'z_gyro',
-                             'compass']:
-        def fget(self):
-            return (getattr(self, prop + '_msb') << 8) + getattr(self, prop + '_lsb')
-        setattr(cls, prop, property(fget))
-    return cls
+class AbsoluteIMU(LegoSensor):
+    # Is this too tricky to create property?
 
-@I2CS.create_i2c_property(
-    command=(0x41, {'read_only':False}),
-    x_tilt= 0x42,
-    y_tilt= 0x43,
-    z_tilt= 0x44,
-    x_acc_lsb= 0x45,
-    x_acc_msb= 0x46,
-    y_acc_lsb= 0x47,
-    y_acc_msb= 0x48,
-    z_acc_lsb= 0x49,
-    z_acc_msb= 0x4A,
-    compass_lsb= 0x4B,
-    compass_msb= 0x4C,
-    x_raw_magnetic_lsb= 0x4D,
-    x_raw_magnetic_msb= 0x4E,
-    y_raw_magnetic_lsb= 0x4F,
-    y_raw_magnetic_msb= 0x50,
-    z_raw_magnetic_lsb= 0x51,
-    z_raw_magnetic_msb= 0x52,
-    x_gyro_lsb= 0x53,
-    x_gyro_msb= 0x54,
-    y_gyro_lsb= 0x55,
-    y_gyro_msb= 0x56,
-    z_gyro_lsb= 0x57,
-    z_gyro_msb= 0x58,
-    gyro_filter= 0x5A)
-@absoluteIMU_property
-class AbsoluteIMU(MindSensorI2CS):
-# Is this too tricky to create property?
+    def __init__(self, port=-1):
+        LegoSensor.__init__(self, port, name='ms-absolute-imu')
+        self._mode = ''
 
-    def __init__(self, port, addr=0x11):
-        I2CS.__init__(self, port, addr)
+    @property
+    def version(self):
+        return self.fw_version
 
+    @property
     def compass_cal_start(self):
-        self.command = 0x43
+        self.write_value('command', 'BEGIN-COMP-CAL')
 
+    @property
     def compass_cal_end(self):
-        self.command = 0x63
+        self.write_value('command', 'END-COMP-CAL')
 
+    @property
     def acc_2g(self):
-        self.command = 0x31
+        self.write_value('command', 'ACCEL-2G')
 
+    @property
     def acc_4g(self):
-        self.command = 0x32
+        self.write_value('command', 'ACCEL-4G')
 
+    @property
     def acc_8g(self):
-        self.command = 0x33
+        self.write_value('command', 'ACCEL-8G')
 
+    @property
     def acc_16g(self):
-        self.command = 0x34
+        self.write_value('command', 'ACCEL-16G')
+
+    @property
+    def x_acc(self):
+        self.mode = 'ACCEL'
+        return self.value0
+
+    @property
+    def y_acc(self):
+        self.mode = 'ACCEL'
+        return self.value1
+
+    @property
+    def z_acc(self):
+        self.mode = 'ACCEL'
+        return self.value2
+
+    @property
+    def x_tilt(self):
+        self.mode = 'TILT'
+        return self.value0
+
+    @property
+    def y_tilt(self):
+        self.mode = 'TILT'
+        return self.value1
+
+    @property
+    def z_tilt(self):
+        self.mode = 'TILT'
+        return self.value2
+
+    @property
+    def x_raw_magnetic(self):
+        self.mode = 'MAG'
+        return self.value0
+
+    @property
+    def y_raw_magnetic(self):
+        self.mode = 'MAG'
+        return self.value1
+
+    @property
+    def z_raw_magnetic(self):
+        self.mode = 'MAG'
+        return self.value2
+
+    @property
+    def x_gyro(self):
+        self.mode = 'GYRO'
+        return self.value0
+
+    @property
+    def y_gyro(self):
+        self.mode = 'GYRO'
+        return self.value1
+
+    @property
+    def z_gyro(self):
+        self.mode = 'COMPASS'
+        return self.value0
+
+    @property
+    def compass(self):
+        self.mode = 'GYRO'
+        return self.value2
+
 
 class MagicWand(MindSensorI2CS):
 
     val = 0xff
 
-    # port = 1..4 , matching the EV3 input port where the magic wand is connected
+    # port = 1..4 , matching the EV3 input port where the magic wand is
+    # connected
     def __init__(self, port, addr=0x38):
         MindSensorI2CS.__init__(self, port, addr)
 
-    def put_data(self,v):
-        self.val=v
+    def put_data(self, v):
+        self.val = v
         MindSensorI2CS.write_byte(self, v)
 
     # turns all leds on
     def led_all_on(self):
         self.put_data(0x00)
-        
+
     # turns all leds off
     def led_all_off(self):
         self.put_data(0xff)
 
     # turns a specific led on. leds are indexed 1..8
     def led_on(self, num):
-        self.put_data(self.val & (0xff - (1<<(num-1))))
+        self.put_data(self.val & (0xff - (1 << (num - 1))))
 
-    # turns a specific led off. leds are indexed 1..8       
+    # turns a specific led off. leds are indexed 1..8
     def led_off(self, num):
-        self.put_data(self.val | (1<<(num-1)))
+        self.put_data(self.val | (1 << (num - 1)))

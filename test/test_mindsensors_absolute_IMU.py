@@ -8,8 +8,6 @@ class TestAbsoluteIMU(unittest.TestCase):
         get_input('Attach a AbsoluteIMU at port 2 then continue')
         d = AbsoluteIMU(2)
         print(d.version)
-        print(d.vendor_id)
-        print(d.device_id)
         get_input('test compass')
         print(d.compass)
         get_input('test x_gyro')

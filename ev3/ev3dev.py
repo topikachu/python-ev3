@@ -195,6 +195,7 @@ class Ev3Dev(object):
     bin_data_format={'read_only': True},
     decimals={'read_only': True},
     #mode={ 'read_only': False},
+    fw_version={'read_only': True},
     modes={'read_only': True},
     name={'read_only': True},
     port_name={'read_only': True},
