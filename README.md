@@ -23,7 +23,7 @@ Current python-ev3 is not stable enough, virtualenv is recommend. Below examples
 * ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```mkvirtualenv ev3_py27 --python=/usr/bin/python2.7 --system-site-packages```
 * ```workon ev3_py27```
-* ```easy_install python-ev3```
+* ```easy_install -U python-ev3```
 * type ```deactive``` to exit
 
 ### Python 3.4
@@ -32,7 +32,7 @@ Current python-ev3 is not stable enough, virtualenv is recommend. Below examples
 * ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```mkvirtualenv ev3_py34 --python=/usr/bin/python3.4 --system-site-packages```
 * ```workon ev3_py34```
-* ```easy_install python-ev3```
+* ```easy_install -U python-ev3```
 * type ```deactive``` to exit
 
 ## Example
