@@ -15,6 +15,12 @@ def cleanup():
     for f in glob.glob('/sys/class/tacho-motor/motor*/command'):
         with open(f, 'w') as f:
                 f.write('stop')
+    for f in glob.glob('/sys/class/leds/*/trigger'):
+        with open(f, 'w') as f:
+                f.write('none')
+    for f in glob.glob('/sys/class/leds/*/brightness'):
+        with open(f, 'w') as f:
+                f.write('0')
 
 class NoSuchSensorError(Exception):
 
