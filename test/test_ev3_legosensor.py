@@ -6,7 +6,7 @@ import glob
 class TestLegoSensor(unittest.TestCase):
 
     def test_LegoSensor(self):
-        get_input('Attach a Msensor on port 1 then continue')
+        get_input('Attach a Lego on port 1 then continue')
         d = LegoSensor(port=1)
         print(d.mode)
         print(d.port)
