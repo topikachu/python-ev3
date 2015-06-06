@@ -5,9 +5,16 @@ import warnings
 import logging
 import re
 import subprocess
+import atexit
 
 logger = logging.getLogger(__name__)
 
+
+@atexit.register
+def cleanup():
+    for f in glob.glob('/sys/class/tacho-motor/motor*/command'):
+        with open(f, 'w') as f:
+                f.write('stop')
 
 class NoSuchSensorError(Exception):
 
