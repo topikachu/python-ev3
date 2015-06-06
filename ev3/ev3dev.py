@@ -1,10 +1,8 @@
 import os
 import glob
-import sys
 import warnings
 import logging
 import re
-import subprocess
 import atexit
 
 logger = logging.getLogger(__name__)
@@ -14,13 +12,14 @@ logger = logging.getLogger(__name__)
 def cleanup():
     for f in glob.glob('/sys/class/tacho-motor/motor*/command'):
         with open(f, 'w') as f:
-                f.write('stop')
+            f.write('stop')
     for f in glob.glob('/sys/class/leds/*/trigger'):
         with open(f, 'w') as f:
-                f.write('none')
+            f.write('none')
     for f in glob.glob('/sys/class/leds/*/brightness'):
         with open(f, 'w') as f:
-                f.write('0')
+            f.write('0')
+
 
 class NoSuchSensorError(Exception):
 
@@ -234,7 +233,7 @@ class LegoSensor(Ev3Dev):
                 with open(p) as f:
                     value = f.read().strip()
                     port_len = len(str(port))
-                    if (value[:port_len+2] == 'in' + str(port)):
+                    if (value[:port_len + 2] == 'in' + str(port)):
                         self.sys_path = os.path.dirname(p)
                         sensor_existing = True
                         break
@@ -334,16 +333,16 @@ class Motor(Ev3Dev):
             raise NoSuchMotorError(port, _type)
 
     def stop(self):
-        self.write_value('command','stop')
+        self.write_value('command', 'stop')
 
     def start(self):
-        self.write_value('command',self.mode)
+        self.write_value('command', self.mode)
 
     def reset(self):
-        self.write_value('command','reset')
+        self.write_value('command', 'reset')
 
-#setup functions just set up all the values, run calls start (run=1)
-#these are separated so that multiple motors can be started at the same time
+# setup functions just set up all the values, run calls start (run=1)
+# these are separated so that multiple motors can be started at the same time
 
     def setup_forever(self, speed_sp, **kwargs):
         self.mode = 'run-forever'
@@ -358,7 +357,7 @@ class Motor(Ev3Dev):
             self.duty_cycle_sp = int(speed_sp)
 
     def run_forever(self, speed_sp, **kwargs):
-        self.setup_forever(speed_sp,**kwargs)
+        self.setup_forever(speed_sp, **kwargs)
         self.start()
 
     def setup_time_limited(self, time_sp, speed_sp, **kwargs):
@@ -375,14 +374,14 @@ class Motor(Ev3Dev):
         self.time_sp = int(time_sp)
 
     def run_time_limited(self, time_sp, speed_sp,  **kwargs):
-        self.setup_time_limited(time_sp,speed_sp,**kwargs)
+        self.setup_time_limited(time_sp, speed_sp, **kwargs)
         self.start()
- 
+
     def setup_position_limited(self, position_sp, speed_sp, absolute=True, **kwargs):
-        if absolute==True:
-          self.mode = 'run-to-abs-pos'
+        if absolute == True:
+            self.mode = 'run-to-abs-pos'
         else:
-          self.mode = 'run-to-rel-pos'
+            self.mode = 'run-to-rel-pos'
         kwargs['speed_regulation'] = True
         for k in kwargs:
             v = kwargs[k]
@@ -392,7 +391,7 @@ class Motor(Ev3Dev):
         self.position_sp = int(position_sp)
 
     def run_position_limited(self, position_sp, speed_sp,  **kwargs):
-        self.setup_position_limited(position_sp,speed_sp,**kwargs)
+        self.setup_position_limited(position_sp, speed_sp, **kwargs)
         self.start()
 
 

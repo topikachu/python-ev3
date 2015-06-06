@@ -5,36 +5,38 @@ import time
 
 
 class EventLoop(object):
+
     """The event loop.
     """
+
     def __init__(self):
         self._events = []
         self._closed = False
 
     def register_condition(self, condition, target, repeat=False, count=-1):
         """Register `target` to be called when ``condition()`` evaluates to
-        true. 
+        true.
 
         If `repeat` is false, `target` will only be called once for a serie
         of polls where `condition` evaluates to true, e.g. when a button is
-        pressed. 
+        pressed.
 
         If `count` is a positive number, the condition will be automatically
         unregistered after been called this many times.
 
-        Returns an ID that can be used to unregister the condition. 
+        Returns an ID that can be used to unregister the condition.
         """
         self._events.append(Event(condition, target, repeat, count))
         return len(self._events) - 1
 
     def register_value_change(self, getter, startvalue, target, count=-1):
-        """Register `target` to be called when evaliating ``getter()`` 
-        returns a new value. `startvalue` is the starting value to check 
+        """Register `target` to be called when evaliating ``getter()``
+        returns a new value. `startvalue` is the starting value to check
         against.
-    
+
         If `count` is a positive number, `target` will be called
         periodically this many times before it will be disabled.
-    
+
         Returns an ID that can be used to unregister the timer.
         """
         self._events.append(ValueChangeEvent(
@@ -43,7 +45,7 @@ class EventLoop(object):
 
     def register_timer(self, seconds, target, count=1):
         """Register `target` to be called when the given number of seconds
-        has passed. 
+        has passed.
 
         If `count` is a positive number, `target` will be called
         periodically this many times before it will be disabled.
@@ -76,12 +78,11 @@ class EventLoop(object):
             time.sleep(0.1)
 
 
-
-
-
 class Event(object):
+
     """The base Event class.
     """
+
     def __init__(self, condition, target, repeat=False, count=-1):
         self._condition = condition
         self._target = target
@@ -127,13 +128,11 @@ class Event(object):
         'automatically unregistered.')
 
 
-
-
 class ValueChangeEvent(Event):
+
     def __init__(self, getter, startvalue, target, count=-1):
         Event.__init__(self, getter, target, count=count)
         self._previous_evaluation = startvalue
 
     def poll(self):
         return self._evaluation != self._previous_evaluation
-            
