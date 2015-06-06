@@ -1,6 +1,6 @@
-from ev3.ev3dev import Lcd
 # -*- coding: utf-8 -*-
 import unittest
+from ev3.ev3dev import Lcd
 from util import get_input
 import time
 from PIL import Image,ImageDraw,ImageFont
