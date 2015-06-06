@@ -462,8 +462,9 @@ class LEDLight(Ev3Dev):
 class LEDSide (object):
 
     def __init__(self, left_or_right):
-        self.green = LEDLight('ev3:green:%s' % left_or_right)
-        self.red = LEDLight('ev3:red:%s' % left_or_right)
+
+        self.green = LEDLight('ev3-%s1:green:ev3dev' % left_or_right)
+        self.red = LEDLight('ev3-%s0:red:ev3dev' % left_or_right)
         self._color = (0, 0)
 
     @property

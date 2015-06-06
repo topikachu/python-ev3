@@ -54,7 +54,7 @@ class ColorSensor(LegoSensor):
               'yellow', 'red', 'white', 'brown')
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, name='ev3-uart-29')
+        LegoSensor.__init__(self, port, name='lego-ev3-color')
 
     @property
     def rgb(self):
@@ -97,7 +97,7 @@ class ColorSensor(LegoSensor):
 class InfraredSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, name='ev3-uart-33')
+        LegoSensor.__init__(self, port, name='lego-ev3-ir')
 
     class REMOTE:
 
@@ -156,7 +156,7 @@ class InfraredSensor(LegoSensor):
 class GyroSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, name='ev3-uart-32')
+        LegoSensor.__init__(self, port, name='lego-ev3-gyro')
 
     @property
     def ang(self):
@@ -177,7 +177,7 @@ class GyroSensor(LegoSensor):
 class UltrasonicSensor(LegoSensor):
 
     def __init__(self, port=-1):
-        LegoSensor.__init__(self, port, name='ev3-uart-30')
+        LegoSensor.__init__(self, port, name='lego-ev3-us')
 
     @property
     def dist_cm(self):
