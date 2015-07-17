@@ -360,6 +360,21 @@ class Motor(Ev3Dev):
         self.setup_forever(speed_sp, **kwargs)
         self.start()
 
+
+    def setup_direct(self, duty_cycle_sp, **kwargs):
+        self.mode = 'run-forever'
+        for k in kwargs:
+            v = kwargs[k]
+            if (v != None):
+                setattr(self, k, v)
+        self.duty_cycle_sp = int(duty_cycle_sp)
+
+
+    def run_direct(self, duty_cycle_sp, **kwargs):
+        self.setup_forever(duty_cycle_sp, **kwargs)
+        self.start()
+
+
     def setup_time_limited(self, time_sp, speed_sp, **kwargs):
         self.mode = 'run-timed'
         for k in kwargs:
@@ -373,9 +388,11 @@ class Motor(Ev3Dev):
             self.duty_cycle_sp = int(speed_sp)
         self.time_sp = int(time_sp)
 
+
     def run_time_limited(self, time_sp, speed_sp,  **kwargs):
         self.setup_time_limited(time_sp, speed_sp, **kwargs)
         self.start()
+
 
     def setup_position_limited(self, position_sp, speed_sp, absolute=True, **kwargs):
         if absolute == True:
@@ -389,6 +406,7 @@ class Motor(Ev3Dev):
                 setattr(self, k, v)
         self.speed_sp = int(speed_sp)
         self.position_sp = int(position_sp)
+
 
     def run_position_limited(self, position_sp, speed_sp,  **kwargs):
         self.setup_position_limited(position_sp, speed_sp, **kwargs)
