@@ -371,7 +371,7 @@ class Motor(Ev3Dev):
 
 
     def run_direct(self, duty_cycle_sp, **kwargs):
-        self.setup_forever(duty_cycle_sp, **kwargs)
+        self.setup_direct(duty_cycle_sp, **kwargs)
         self.start()
 
 
