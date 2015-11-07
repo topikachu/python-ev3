@@ -104,7 +104,7 @@ class create_ev3_property(object):
 
     def __call__(self, cls):
         for name, args in self.kwargs.items():
-            def ev3_property(name, read_only=False, write_only=False, property_type=Ev3StringType):
+            def ev3_property(name, read_only=False, write_only=False, flush_on_write=False, property_type=Ev3StringType):
                 def fget(self):
                     if not write_only:
                         return property_type.post_read(self.read_value(name))
@@ -113,7 +113,7 @@ class create_ev3_property(object):
 
                 def fset(self, value):
                     self.write_value(
-                        name, property_type.pre_write(value))
+                        name, property_type.pre_write(value), flush_on_write)
                 return property(fget, None if read_only else fset)
 
             setattr(cls, name, ev3_property(name, **args))
@@ -193,11 +193,13 @@ class Ev3Dev(object):
         else:
             return None
 
-    def write_value(self, name, value):
+    def write_value(self, name, value, flush = False):
         attr_file = os.path.join(self.sys_path, name)
         if os.path.isfile(attr_file):
             with open(attr_file, 'w') as f:
                 f.write(str(value))
+		if flush:
+		    f.flush()
         else:
             return
 
@@ -460,7 +462,7 @@ class I2CS(object):
 @create_ev3_property(
     brightness={'read_only': False, 'property_type': Ev3IntType},
     max_brightness={'read_only': True, 'property_type': Ev3IntType},
-    trigger={'read_only': False},
+    trigger={'read_only': False, 'flush_on_write': True},
     delay_on={'read_only': False, 'property_type': Ev3IntType},
     delay_off={'read_only': False, 'property_type': Ev3IntType}
 )
