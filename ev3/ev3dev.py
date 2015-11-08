@@ -198,8 +198,8 @@ class Ev3Dev(object):
         if os.path.isfile(attr_file):
             with open(attr_file, 'w') as f:
                 f.write(str(value))
-		if flush:
-		    f.flush()
+                if flush:
+                    f.flush()
         else:
             return
 
