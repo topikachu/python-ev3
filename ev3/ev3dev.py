@@ -313,22 +313,22 @@ class Motor(Ev3Dev):
         searchpath = '/sys/class/tacho-motor/motor*/'
         if (port != ''):
             self.port = port
-            for p in glob.glob(searchpath + 'port_name'):
+            for p in glob.glob(searchpath + 'uevent'):
                 with open(p) as f:
-                    value = f.read().strip()
-                    if (value.lower() == ('out' + port).lower()):
-                        self.sys_path = os.path.dirname(p)
-                        motor_existing = True
-                        break
+                    for value in f:
+                        if (value.strip().lower() == ('LEGO_ADDRESS=out' + port).lower()):
+                            self.sys_path = os.path.dirname(p)
+                            motor_existing = True
+                            break
         if (_type != '' and port == ''):
-            for p in glob.glob(searchpath + 'driver_name'):
+            for p in glob.glob(searchpath + 'uevent'):
                 with open(p) as f:
-                    value = f.read().strip()
-                    if (value.lower() == _type.lower()):
-                        self.sys_path = os.path.dirname(p)
-                        self.port = self.port_name[3:]
-                        motor_existing = True
-                        break
+                    for value in f:
+                        if (value.strip().lower() == ('LEGO_DEVICE_NAME=' + _type).lower()):
+                            self.sys_path = os.path.dirname(p)
+                            self.port = self.port_name[3:]
+                            motor_existing = True
+                            break
         if (not motor_existing):
             raise NoSuchMotorError(port, _type)
 
