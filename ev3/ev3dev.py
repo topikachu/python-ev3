@@ -229,23 +229,32 @@ class LegoSensor(Ev3Dev):
         sensor_existing = False
         if (port > 0):
             self.port = port
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/port_name'):
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/uevent'):
                 with open(p) as f:
-                    value = f.read().strip()
-                    port_len = len(str(port))
-                    if (value[:port_len + 2] == 'in' + str(port)):
-                        self.sys_path = os.path.dirname(p)
-                        sensor_existing = True
-                        break
-        if (len(glob.glob('/sys/class/lego-sensor/sensor*/driver_name')) > 0 and name != None and port == -1):
-            for p in glob.glob('/sys/class/lego-sensor/sensor*/driver_name'):
+                    for value in f:
+                        if (value.strip().lower() == ('LEGO_ADDRESS=in' + str(port)).lower()):
+                            self.sys_path = os.path.dirname(p)
+                            sensor_existing = True
+                            break
+
+        if name != None and port == -1:
+            for p in glob.glob('/sys/class/lego-sensor/sensor*/uevent'):
                 with open(p) as f:
-                    value = f.read().strip()
-                    if (name in value):
-                        self.sys_path = os.path.dirname(p)
-                        self.port = int(self.port_name.split(':')[0][2:])
-                        sensor_existing = True
-                        break
+                    port_name = None
+                    for value in f:
+                        if (value.strip().lower().startswith('LEGO_ADDRESS=in'.lower())):
+                            port_name = value.strip()[-1]
+                            if sensor_existing:
+                                break
+                        if (value.strip().lower() == ('LEGO_DRIVER_NAME=' + name).lower()):
+                            self.sys_path = os.path.dirname(p)
+                            sensor_existing = True
+                            if port_name is not None:
+                                break
+                if sensor_existing:
+                    self.port = int(port_name)
+                    break
+
         if (not sensor_existing):
             raise NoSuchSensorError(port, name)
         self._mode = self.read_value('mode')
@@ -323,12 +332,23 @@ class Motor(Ev3Dev):
         if (_type != '' and port == ''):
             for p in glob.glob(searchpath + 'uevent'):
                 with open(p) as f:
+                    port_name = None
                     for value in f:
-                        if (value.strip().lower() == ('LEGO_DEVICE_NAME=' + _type).lower()):
+                        if (value.strip().lower().startswith('LEGO_ADDRESS=out'.lower())):
+                            port_name = value.strip()[-1]
+                            if motor_existing:
+                                break
+
+                        if (value.strip().lower() == ('LEGO_DRIVER_NAME=' + _type).lower()):
                             self.sys_path = os.path.dirname(p)
-                            self.port = self.port_name[3:]
                             motor_existing = True
-                            break
+                            if port_name is not None:
+                                break
+
+                if motor_existing:
+                    self.port = port_name
+                    break
+
         if (not motor_existing):
             raise NoSuchMotorError(port, _type)
 
