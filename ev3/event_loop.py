@@ -30,7 +30,7 @@ class EventLoop(object):
         return len(self._events) - 1
 
     def register_value_change(self, getter, startvalue, target, count=-1):
-        """Register `target` to be called when evaliating ``getter()``
+        """Register `target` to be called when evaluating ``getter()``
         returns a new value. `startvalue` is the starting value to check
         against.
 
@@ -54,28 +54,37 @@ class EventLoop(object):
         """
         target_time = time.time() + seconds
         condition = lambda: time.time() >= target_time
-        return self._add_condition(condition, target, False, count)
+        return self.register_condition(condition, target, False, count)
+
+    def register_poll(self, poller, callback):
+        """Register `callback` to be called on every ``poller()`` evaluation.
+
+        Returns an ID that can be used to unregister this poll event.
+        """
+        self._events.append(PollEvent(
+            poller, callback))
+        return len(self._events) - 1
 
     def unregister(self, id):
         """Ungegister condition with the given id."""
         del self._events[id]
 
-    def start(self):
+    def start(self, time_delta = 0.1):
         """Starts the event loop."""
-        self._loop()
+        self._loop(time_delta)
 
     def stop(self):
         """Stops event loop."""
         self._closed = True
 
-    def _loop(self):
+    def _loop(self, time_delta = 0.1):
         """The event loop."""
         while not self._closed:
             for i in range(len(self._events) - 1, -1, -1):
                 self._events[i].evaluate()
                 if self._events[i]._count == 0:
                     self.unregister(i)
-            time.sleep(0.1)
+            time.sleep(time_delta)
 
 
 class Event(object):
@@ -136,3 +145,12 @@ class ValueChangeEvent(Event):
 
     def poll(self):
         return self._evaluation != self._previous_evaluation
+
+
+class PollEvent(Event):
+
+    def __init__(self, poller, callback):
+        Event.__init__(self, poller, callback, count=-1)
+
+    def poll(self):
+        return True
