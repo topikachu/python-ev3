@@ -19,7 +19,7 @@ Current python-ev3 is not stable enough, virtualenv is recommend. Below examples
 ## Install the python-ev3 on EV3
 ### Python 2.7
 * ```apt-get update```
-* ```apt-get install virtualenv  virtualenvwrapper python-setuptools python-smbus python-pil```
+* ```apt-get install python-virtualenv  virtualenvwrapper python-smbus python-imaging```
 * ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```mkvirtualenv ev3_py27 --python=/usr/bin/python2.7 --system-site-packages```
 * ```workon ev3_py27```
@@ -28,7 +28,7 @@ Current python-ev3 is not stable enough, virtualenv is recommend. Below examples
 
 ### Python 3.4
 * ```apt-get update```
-* ```apt-get install virtualenv  virtualenvwrapper python3-setuptools python3-smbus python3-pil```
+* ```apt-get install python-virtualenv  virtualenvwrapper python3-smbus python3-imaging```
 * ```source /etc/bash_completion.d/virtualenvwrapper```
 * ```mkvirtualenv ev3_py34 --python=/usr/bin/python3.4 --system-site-packages```
 * ```workon ev3_py34```
